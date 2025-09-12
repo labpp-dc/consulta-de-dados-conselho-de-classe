@@ -1,47 +1,41 @@
 # Requisitos Funcionais
 
-## RF01
-Registrar entrada e saída
-## RF02
-Pesquisar aluno
-## RF03
-Cadastrar visitantes
-## RF04
-Login
-## RF05
-Lançamento e visualização de advertências (2 tipos: uniforme e comportamento)
-## RF06
-Notificação p/ responsável caso aluno tenha que voltar pra casa
-## RF07
-Direção poder marcar suspensão e visualização ser para todos os adms
-## RF08
-Visualizar e editar atrasos e faltas (semanal/mensal/anual do aluno)
-## RF09
-Visualizar o horário da turma (horário limite incluso) e computar automaticamente o atraso
+## RF1
+O sistema deverá registrar ou armazenar o nome, matrícula e turma de cada aluno.
+## RF2
+O sistema deve registrar o horário de entrada e saída de cada turma.
+## RF3
+O sistema deve registrar diariamente o horário de entrada de cada aluno.
+## RF4
+O sistema deve registrar diariamente o horário de saíde de cada aluno.
+## RF5
+O sistema deve calcular a quantidade de faltas de cada aluno.
+## RF6
+O sistema deve calcular o percentual de frequência de cada aluno.
+## RF7
+O sistema deve permitir abono de falta no turno.
+## RF8
+O sistema deve permitir abono de falta na ficha do aluno.
+## RF9
+O sistema deve registrar os dias letivos do ano.
 ## RF10
-Visualizar se o aluno está suspenso
+O sistema deve gerar relatórios de presença individuais.
 ## RF11
-Notificação p/ responsáveis e inspetores para atrasos na entrada
+O sistema deve gerar relatórios das turmas.
 ## RF12
-Soep com login de administrador
+O sistema deve gerar relatórios de todos os alunos.
 ## RF13
-Usuários para inspetores, seguranças e direção como administradores
-## RF14
-Usuários para SEORE com conta de inspetor
-## RF15
-Hyperlink na turma do aluno apresentando sua grade horária
+O sistema deve informar a quantidade de alunos presentes no campus.
 
-# Requisitos Não-Functionais
+# Requisitos Não-Funcionais
 
 ## RNF1
-Ser uma plataforma web possível de acessar no computador e celular
+Ser uma plataforma responsiva para todos os tipos de tela.
 ## RNF2
-Ter as cores do colégio (azul e branco)
+Ter as cores do colégio (azul e branco).
 ## RNF3
-Todo desenvolvido em JavaScript e TypeScript
+Backend em Node.js e Typescript.
 ## RNF4
-Backend em node.js
-## RNF4
-Frontend com react
+Frontend em Svelte e Tailwind.
 ## RNF5
-Banco de dados em sqlite
+Banco de dados em PostgreSQL.
