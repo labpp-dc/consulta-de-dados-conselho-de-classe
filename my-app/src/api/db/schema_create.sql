@@ -50,7 +50,6 @@ CREATE TABLE TurmaEstudante (
 CREATE TABLE AnoLetivo (
     id bigint GENERATED ALWAYS AS IDENTITY,
     Ano TEXT NOT NULL,
-    serie INTEGER NOT NULL,
 
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
 );
@@ -65,7 +64,7 @@ CREATE TABLE Cursos (
 
 CREATE TABLE Entrada(
     PRIMARY KEY id INTEGER NOT NULL,
-    data DATE NOT NULL,
+    data DATETIME NOT NULL,
     almoco INTEGER,
 
     CONSTRAINT pk_saida PRIMARY KEY (id),
@@ -76,7 +75,7 @@ CREATE TABLE Entrada(
 CREATE TABLE Saida(
     PRIMARY KEY id INTEGER NOT NULL,
     FOREIGN KEY (estudante) REFERENCES Estudante(id),
-    data DATE NOT NULL,
+    data DATETIME NOT NULL,
 
     CONSTRAINT pk_saida PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
