@@ -7,7 +7,7 @@ CREATE TABLE estudante (
     matricula TEXT UNIQUE NOT NULL,
     suspenso INTEGER,
     foto TEXT NOT NULL,
-    role text NOT NULL DEFAULT 'user',
+    
 
     
     -- Constraints
