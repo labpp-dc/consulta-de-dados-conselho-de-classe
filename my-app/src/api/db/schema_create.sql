@@ -30,6 +30,7 @@ CREATE TABLE Turmas (
     FOREIGN KEY (curso_id) REFERENCES Cursos(id),
     anoLetivo_id INTEGER NOT NULL,
     FOREIGN KEY (anoLetivo_id) REFERENCES AnoLetivo(id)
+    -- CONSTRAINT ck_turma_serie CHECK
 
 );
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular
@@ -84,7 +85,7 @@ CREATE TABLE Saida(
 CREATE TABLE Ocorrencias(
     PRIMARY KEY id INTEGER NOT NULL,
     uniforme TEXT,
-    atrasoa TEXT,
+    atraso TEXT,
     comportamento TEXT,
 
     CONSTRAINT pk_saida PRIMARY KEY (id),
