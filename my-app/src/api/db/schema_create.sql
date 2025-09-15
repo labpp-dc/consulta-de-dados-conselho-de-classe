@@ -26,6 +26,8 @@ CREATE TABLE Turmas (
     
     -- Constraints
     CONSTRAINT pk_turma PRIMARY KEY (id),
+    curso_id INTEGER NOT NULL,
+    FOREIGN KEY (curso_id) REFERENCES Cursos(id),
     anoLetivo_id INTEGER NOT NULL,
     FOREIGN KEY (anoLetivo_id) REFERENCES AnoLetivo(id)
 
@@ -51,7 +53,16 @@ CREATE TABLE AnoLetivo (
     serie INTEGER NOT NULL,
 
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
-)
+);
+
+CREATE TABLE Cursos (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    Nome TEXT NOT NULL,
+
+    CONSTRAINT pk_curso PRIMARY KEY (id)
+);
+
+
 CREATE TABLE Entrada(
     PRIMARY KEY id INTEGER NOT NULL,
     data DATE NOT NULL,
@@ -61,6 +72,7 @@ CREATE TABLE Entrada(
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY(estudante_id) REFERENCES Estudante(id)
 );
+
 CREATE TABLE Saida(
     PRIMARY KEY id INTEGER NOT NULL,
     FOREIGN KEY (estudante) REFERENCES Estudante(id),
