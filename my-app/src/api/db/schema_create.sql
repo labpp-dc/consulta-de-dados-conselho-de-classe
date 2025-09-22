@@ -12,7 +12,7 @@ CREATE TABLE estudante (
     
     -- Constraints
     CONSTRAINT pk_usuario PRIMARY KEY (id),
-    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) == 8 OR length(matricula) == 9), -- comprimento
+    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9), -- comprimento
     turma_id INTEGER NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id)
 
@@ -64,7 +64,7 @@ CREATE TABLE Cursos (
 
 
 CREATE TABLE Entrada(
-    PRIMARY KEY id INTEGER NOT NULL,
+    id bigint GENERATED ALWAYS AS IDENTITY,
     data DATETIME NOT NULL,
     almoco INTEGER,
 
@@ -74,7 +74,7 @@ CREATE TABLE Entrada(
 );
 
 CREATE TABLE Saida(
-    PRIMARY KEY id INTEGER NOT NULL,
+    id bigint GENERATED ALWAYS AS IDENTITY,
     FOREIGN KEY (estudante) REFERENCES Estudante(id),
     data DATETIME NOT NULL,
 
@@ -83,7 +83,7 @@ CREATE TABLE Saida(
     FOREIGN KEY(estudante_id) REFERENCES Estudante(id)
     );
 CREATE TABLE Ocorrencias(
-    PRIMARY KEY id INTEGER NOT NULL,
+    id bigint GENERATED ALWAYS AS IDENTITY,
     uniforme TEXT,
     atraso TEXT,
     comportamento TEXT,
@@ -93,7 +93,7 @@ CREATE TABLE Ocorrencias(
     FOREIGN KEY(estudante_id) REFERENCES Estudante(id)
 );
 CREATE TABLE Visitante(
-    PRIMARY KEY id INTEGER NOT NULL,
+    id bigint GENERATED ALWAYS AS IDENTITY,
     nome TEXT NOT NULL,
     nomeSocial TEXT,
     tipodeCadastrante TEXT NOT NULL,
