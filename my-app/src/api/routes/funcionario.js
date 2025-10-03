@@ -24,12 +24,12 @@ router.get('/', verifyToken, isAdmin, async function(req, res) {
   }
 });
 
-/* GET parametrizado - Buscar funcionario autenticado */
+// GET parametrizado - Buscar funcionário autenticado 
 router.get('/me', verifyToken, async function(req, res) {
   try {
     // parâmetro obtido do token pelo middleware
     const id = req.user.id;
-    const result = await pool.query('SELECT id, login, email, role FROM usuario WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM Funcionario WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -52,6 +52,7 @@ router.get('/me', verifyToken, async function(req, res) {
     });
   }
 });
+
 
 /* GET parametrizado - Buscar usuário por ID */
 router.get('/:id', verifyToken, isAdmin, async function(req, res) {
