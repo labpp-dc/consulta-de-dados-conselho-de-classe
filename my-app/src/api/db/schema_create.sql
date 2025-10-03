@@ -1,19 +1,27 @@
+DROP TABLE IF EXISTS Cursos;
+DROP TABLE IF EXISTS AnoLetivo;
+DROP TABLE IF EXISTS Turmas;
 DROP TABLE IF EXISTS estudante;
+DROP TABLE IF EXISTS TurmaEstudante;
+DROP TABLE IF EXISTS email;
+DROP TABLE IF EXISTS Entrada;
+DROP TABLE IF EXISTS Saida;
+DROP TABLE IF EXISTS Ocorrencias;
+DROP TABLE IF EXISTS Visitante;
+DROP TABLE IF EXISTS Ocorrencias;
 
-CREATE TABLE estudante (
-    id BIGINT GENERATED ALWAYS AS IDENTITY,
-    nome TEXT NOT NULL,
-    nomeSocial TEXT,
-    matricula TEXT UNIQUE NOT NULL,
-    suspenso INTEGER,
-    foto TEXT NOT NULL,
-    
-    -- Constraints
-    CONSTRAINT pk_usuario PRIMARY KEY (id),
-    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9), -- comprimento
-    turma_id INTEGER NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
-    
+CREATE TABLE Cursos (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    Nome TEXT NOT NULL,
+
+    CONSTRAINT pk_curso PRIMARY KEY (id)
+);
+
+CREATE TABLE AnoLetivo (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    Ano TEXT NOT NULL,
+
+    CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
 );
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -22,7 +30,6 @@ CREATE TABLE Turmas (
     serie INTEGER NOT NULL,
 
     
-    -- Constraints
     CONSTRAINT pk_turma PRIMARY KEY (id),
     curso_id INTEGER NOT NULL,
     FOREIGN KEY (curso_id) REFERENCES Cursos(id),
@@ -35,10 +42,26 @@ CREATE TABLE Turmas (
     -- CONSTRAINT ck_usuario_senha_length CHECK (length(senha) >= 6), -- comprimento mínimo
     -- CONSTRAINT ck_usuario_role_valid CHECK (role IN ( 'user')) -- tipos de usuário
 
+
+CREATE TABLE estudante (
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nome TEXT NOT NULL,
+    nomeSocial TEXT,
+    matricula TEXT UNIQUE NOT NULL,
+    suspenso INTEGER,
+    foto TEXT NOT NULL,
+    
+    CONSTRAINT pk_usuario PRIMARY KEY (id),
+    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9), -- comprimento
+    turma_id INTEGER NOT NULL,
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
+    
+);
+
+
 CREATE TABLE TurmaEstudante (
     id bigint GENERATED ALWAYS AS IDENTITY,
 
-    -- Constraints
     CONSTRAINT pk_turmaEstudante PRIMARY KEY (id),
     turma_id INTEGER NOT NULL,
     estudante_id INTEGER NOT NULL,
@@ -46,38 +69,26 @@ CREATE TABLE TurmaEstudante (
     FOREIGN KEY (estudante_id) REFERENCES Turmas(id)
 
 );
-CREATE TABLE AnoLetivo (
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    Ano TEXT NOT NULL,
 
-    CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
-);
 
 CREATE TABLE email(
     id bigint GENERATED ALWAYS AS IDENTITY,
     endereco TEXT NOT NULL,
     
-    CONSTRAINT pk_usuario PRIMARY KEY (id),
+    CONSTRAINT pk_email PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY (estudante_id) REFERENCES estudante(id)
 
 
 );
 
-CREATE TABLE Cursos (
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    Nome TEXT NOT NULL,
-
-    CONSTRAINT pk_curso PRIMARY KEY (id)
-);
-
 
 CREATE TABLE Entrada(
     id bigint GENERATED ALWAYS AS IDENTITY,
-    data DATETIME NOT NULL,
+    data TIMESTAMP NOT NULL,
     almoco INTEGER,
 
-    CONSTRAINT pk_saida PRIMARY KEY (id),
+    CONSTRAINT pk_Entrada PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY(estudante_id) REFERENCES Estudante(id)
 );
@@ -85,7 +96,7 @@ CREATE TABLE Entrada(
 CREATE TABLE Saida(
     id bigint GENERATED ALWAYS AS IDENTITY,
     FOREIGN KEY (estudante) REFERENCES Estudante(id),
-    data DATETIME NOT NULL,
+    data TIMESTAMP NOT NULL,
 
     CONSTRAINT pk_saida PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
@@ -113,7 +124,7 @@ CREATE TABLE Visitante(
 
 );
 
-DROP TABLE EXISTS IF EXISTS Funcionario;
+DROP TABLE IF EXISTS Funcionario;
 
 CREATE TABLE Funcionario(
     id bigint GENERATED ALWAYS AS IDENTITY,
