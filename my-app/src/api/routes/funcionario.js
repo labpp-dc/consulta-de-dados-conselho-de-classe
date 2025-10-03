@@ -24,7 +24,7 @@ router.get('/', verifyToken, isAdmin, async function(req, res) {
   }
 });
 
-/* GET parametrizado - Buscar usuário autenticado */
+/* GET parametrizado - Buscar funcionario autenticado */
 router.get('/me', verifyToken, async function(req, res) {
   try {
     // parâmetro obtido do token pelo middleware
