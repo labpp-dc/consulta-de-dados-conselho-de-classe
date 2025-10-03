@@ -8,14 +8,12 @@ CREATE TABLE estudante (
     suspenso INTEGER,
     foto TEXT NOT NULL,
     
-
-    
     -- Constraints
     CONSTRAINT pk_usuario PRIMARY KEY (id),
     CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9), -- comprimento
     turma_id INTEGER NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id)
-
+    
 );
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -53,6 +51,17 @@ CREATE TABLE AnoLetivo (
     Ano TEXT NOT NULL,
 
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
+);
+
+CREATE TABLE email(
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    endereco TEXT NOT NULL,
+    
+    CONSTRAINT pk_usuario PRIMARY KEY (id),
+    estudante_id INTEGER NOT NULL,
+    FOREIGN KEY (estudante_id) REFERENCES estudante(id)
+
+
 );
 
 CREATE TABLE Cursos (
