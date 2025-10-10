@@ -20,12 +20,13 @@ CREATE TABLE Cursos (
 CREATE TABLE AnoLetivo (
     id bigint GENERATED ALWAYS AS IDENTITY,
     Ano TEXT NOT NULL,
-
+    
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
 );
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
-    curso text NOT NULL,
+    nome TEXT NOT NULL,
+    
     turno TEXT NOT NULL,
     serie INTEGER NOT NULL,
 
@@ -35,7 +36,8 @@ CREATE TABLE Turmas (
     FOREIGN KEY (curso_id) REFERENCES Cursos(id),
     anoLetivo_id INTEGER NOT NULL,
     FOREIGN KEY (anoLetivo_id) REFERENCES AnoLetivo(id)
-    -- CONSTRAINT ck_turma_serie CHECK
+    -- CONSTRAINT ck_turma_serie CHECK a fazer
+    -- Fazer um constraint para nome de turma
 
 );
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular

@@ -139,19 +139,9 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
       });
     }
     
-    let query, params;
-    
-    if (senha && senha.trim() !== '') {
-      // Atualizar com nova senha
-      const hashedPassword = await bcrypt.hash(senha, 12);
-      query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, suspenso = $4, foto = $5, turma = $6 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma';
-      params = [ nome, nomeSocial, matricula, suspenso, foto, turma, id];
-    } else {
-      // Atualizar sem alterar senha
-      query = 'UPDATE estudante SET login = $1, email = $2, role = $3 WHERE id = $4 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma';
-      params = [ nome, nomeSocial, matricula, suspenso, foto, turma, id];
-    }
-    
+    let query, params;    
+    query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, suspenso = $4, foto = $5, turma = $6 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma';
+    params = [ nome, nomeSocial, matricula, suspenso, foto, turma, id];    
     const result = await pool.query(query, params);
     
     res.json({

@@ -9,7 +9,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 // requer usuário autenticado como admin
 router.get('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const result = await pool.query('SELECT id, nome, matricula, role FROM usuario ORDER BY id');
+    const result = await pool.query('SELECT id, login, role FROM usuario ORDER BY id');
     res.json({
       success: true,
       data: result.rows
@@ -58,7 +58,7 @@ router.get('/me', verifyToken, async function(req, res) {
 router.get('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT id, login, email, role FROM usuario WHERE id = $1', [id]);
+    const result = await pool.query('SELECT id, login, role FROM usuario WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -85,14 +85,14 @@ router.get('/:id', verifyToken, isAdmin, async function(req, res) {
 /* POST - Criar novo usuário */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { login, email, senha, role = 'user' } = req.body;
+    const { login, senha, role} = req.body;
     
     // Validação básica
-    if (!login || !email || !senha ) {
+    if (!login || !senha ) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Login, email e senha são obrigatórios'
+        message: 'Login,  e senha são obrigatórios'
       });
     }
     
@@ -105,21 +105,12 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
       });
     }
 
-    // Verificar se o email já existe
-    const existingEmail = await pool.query('SELECT id FROM usuario WHERE email = $1', [email]);
-    if (existingEmail.rows.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Email já está em uso'
-      });
-    }
-
     // Hash da senha
     const hashedPassword = await bcrypt.hash(senha, 12);
 
     const result = await pool.query(
-      'INSERT INTO usuario (login, email, senha, role) VALUES ($1, $2, $3, $4) RETURNING id, login, email, role',
-      [login, email, hashedPassword, role]
+      'INSERT INTO usuario (login, senha, role) VALUES ($1, $2, $3, $4) RETURNING id, login, role',
+      [login, hashedPassword, role]
     );
 
     // http status 201 - Created
@@ -152,7 +143,7 @@ router.post('/login', async function(req, res) {
     const { login, password } = req.body;
     // obtém o usuário do banco de dados
     const result = await pool.query(`SELECT 
-      id, login, email, senha as passwordHash, role
+      id, login, senha as passwordHash, role
       FROM usuario 
       WHERE login = $1`, [login]);
 
@@ -201,7 +192,6 @@ router.post('/login', async function(req, res) {
         { 
           id: user.id, 
           login: user.login,
-          email: user.email,
           // tipo do usuário, que vem do banco
           role: user.role 
           // a senha não entra no token para não ser exposta
@@ -234,14 +224,14 @@ router.post('/login', async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { login, email, senha, role } = req.body;
+    const { login, senha, role } = req.body;
     
     // Validação básica
-    if (!login || !email || !role) {
+    if (!login || !role) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Login, email e role são obrigatórios'
+        message: 'Login e role são obrigatórios'
       });
     }
     
@@ -264,27 +254,18 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
         message: 'Login já está em uso por outro usuário'
       });
     }
-
-    // Verificar se o email já está em uso por outro usuário
-    const existingEmail = await pool.query('SELECT id FROM usuario WHERE email = $1 AND id != $2', [email, id]);
-    if (existingEmail.rows.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Email já está em uso por outro usuário'
-      });
-    }
     
     let query, params;
     
     if (senha && senha.trim() !== '') {
       // Atualizar com nova senha
       const hashedPassword = await bcrypt.hash(senha, 12);
-      query = 'UPDATE usuario SET login = $1, email = $2, senha = $3, role = $4 WHERE id = $5 RETURNING id, login, email, role';
-      params = [login, email, hashedPassword, role, id];
+      query = 'UPDATE usuario SET login = $1, senha = $2, role = $3 WHERE id = $4 RETURNING id, login, role';
+      params = [login, hashedPassword, role, id];
     } else {
       // Atualizar sem alterar senha
-      query = 'UPDATE usuario SET login = $1, email = $2, role = $3 WHERE id = $4 RETURNING id, login, email, role';
-      params = [login, email, role, id];
+      query = 'UPDATE usuario SET login = $1, role = $2 WHERE id = $3 RETURNING id, login, role';
+      params = [login, role, id];
     }
     
     const result = await pool.query(query, params);
