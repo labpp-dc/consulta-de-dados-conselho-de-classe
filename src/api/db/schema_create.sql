@@ -109,6 +109,7 @@ CREATE TABLE Ocorrencias(
     uniforme TEXT,
     atraso TEXT,
     comportamento TEXT,
+    data TIMESTAMP NOT NULL,
 
     CONSTRAINT pk_saida PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
