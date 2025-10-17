@@ -8,6 +8,16 @@ var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/funcionario');
+var anoLetivoRouter = require('./routes/anoLetivo');
+var cursoRouter = require('./routes/curso');
+var emailRouter = require('./routes/email');
+var entradaRouter = require('./router/entrada');
+var estudanteRouter = require('./router/estudante');
+var ocorrenciaRouter = require('./router/ocorrencia');
+var saidaRouter = require('./router/saida');
+var turmaRouter = require('./router/turma');
+var visitanteRouter = require('./router/visitante');
+
 
 var app = express();
 
