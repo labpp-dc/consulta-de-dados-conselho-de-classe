@@ -28,7 +28,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Email já está em uso'
       });
     }
-
+    //Insert
+    const result = await pool.query(
+      'INSERT INTO email (endereco, estudante) VALUES ($1, $2) RETURNING id, endereco, estudante',
+      [endereco, estudante]
+    );
     // http status 201 - Created
     res.status(201).json({
       success: true,

@@ -46,7 +46,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Nome já está em uso'
       });
     }
-
+    //Insert
+    const result = await pool.query(
+      'INSERT INTO Cursos (nome) VALUES ($1) RETURNING id, nome',
+      [nome]
+    );
     // http status 201 - Created
     res.status(201).json({
       success: true,

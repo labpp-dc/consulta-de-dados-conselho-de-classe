@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS Saida;
 DROP TABLE IF EXISTS Ocorrencias;
 DROP TABLE IF EXISTS Visitante;
 DROP TABLE IF EXISTS Ocorrencias;
+DROP TABLE IF EXISTS Funcionario;
+
 
 CREATE TABLE Cursos (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -127,7 +129,7 @@ CREATE TABLE Visitante(
 
 );
 
-DROP TABLE IF EXISTS Funcionario;
+
 
 CREATE TABLE Funcionario(
     id bigint GENERATED ALWAYS AS IDENTITY,

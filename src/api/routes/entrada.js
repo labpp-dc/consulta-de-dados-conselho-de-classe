@@ -45,7 +45,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Essa lista de entrada já está em uso'
       });
     }
-
+    //Insert
+    const result = await pool.query(
+      'INSERT INTO Entrada ( data, almoco, estudante) VALUES ($1, $2, $3) RETURNING id,  data, almoco, estudante',
+      [ data, almoco, estudante]
+    );
     // http status 201 - Created
     res.status(201).json({
       success: true,

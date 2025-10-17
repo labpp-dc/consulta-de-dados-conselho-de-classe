@@ -46,6 +46,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Nome de turma já está em uso em outra turma deste ano'
       });
     }
+    //Insert
+    const result = await pool.query(
+      'INSERT INTO Turmas (nome, turno, serie, curso, anoLetivo) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, nome, turno, serie, curso, anoLetivo',
+      [nome, turno, serie, curso, anoLetivo]
+    );
 
     // http status 201 - Created
     res.status(201).json({

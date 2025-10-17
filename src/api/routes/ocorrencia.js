@@ -45,7 +45,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Essa lista de ocorrencias já está em uso'
       });
     }
-
+    // Insert
+    const result = await pool.query(
+      'INSERT INTO Ocorrencias (uniforme, atraso, comportamento, estudante) VALUES ($1, $2, $3, $4) RETURNING id, uniforme, atraso, comportamento, estudante',
+      [uniforme, atraso, comportamento, estudante]
+    );
     // http status 201 - Created
     res.status(201).json({
       success: true,
@@ -122,22 +126,22 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   }
 });
 
-/* DELETE - Remover lista de saida*/
+/* DELETE - Remover lista de ocorrência*/
 router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
     
     // Verificar se o usuário existe
-    const userExists = await pool.query('SELECT id FROM Saida WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Ocorrencias WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Lista de saida não encontrada'
+        message: 'Lista de ocorrências não encontrada'
       });
     }
     
-    await pool.query('DELETE FROM Saida WHERE id = $1', [id]);
+    await pool.query('DELETE FROM Ocorrencias WHERE id = $1', [id]);
     
     res.json({
       success: true,

@@ -46,7 +46,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Ano letivo já está em uso'
       });
     }
-
+    //Insert
+    const result = await pool.query(
+      'INSERT INTO AnoLetivo (ano) VALUES ($1) RETURNING id, ano',
+      [ano]
+    );
     // http status 201 - Created
     res.status(201).json({
       success: true,
