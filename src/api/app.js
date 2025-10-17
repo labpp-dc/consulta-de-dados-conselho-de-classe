@@ -8,6 +8,16 @@ var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/funcionario');
+var anoLetivoRouter = require('./routes/anoLetivo');
+var cursoRouter = require('./routes/curso');
+var emailRouter = require('./routes/email');
+var entradaRouter = require('./router/entrada');
+var estudanteRouter = require('./router/estudante');
+var ocorrenciaRouter = require('./router/ocorrencia');
+var saidaRouter = require('./router/saida');
+var turmaRouter = require('./router/turma');
+var visitanteRouter = require('./router/visitante');
+
 
 var app = express();
 
@@ -26,6 +36,15 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/anoLetivo', anoLetivoRouter);
+app.use('/curso', cursoRouter);
+app.use('/email', emailRouter);
+app.use('/entrada', entradaRouter);
+app.use('/estudante', estudanteRouter);
+app.use('/ocorrencia', ocorrenciaRouter);
+app.use('/saida', saidaRouter);
+app.use('/turma', turmaRouter);
+app.use('/visitante', visitanteRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
