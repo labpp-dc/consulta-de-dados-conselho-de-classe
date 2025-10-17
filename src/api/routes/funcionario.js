@@ -107,9 +107,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 
     // Hash da senha
     const hashedPassword = await bcrypt.hash(senha, 12);
-
+    
+    //Insert
     const result = await pool.query(
-      'INSERT INTO usuario (login, senha, role) VALUES ($1, $2, $3, $4) RETURNING id, login, role',
+      'INSERT INTO Funcionario (login, senha, role) VALUES ($1, $2, $3, $4) RETURNING id, login, role',
       [login, hashedPassword, role]
     );
 

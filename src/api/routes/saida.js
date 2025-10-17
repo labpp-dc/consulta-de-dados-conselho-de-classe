@@ -46,6 +46,12 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
       });
     }
 
+    //Insert
+    const result = await pool.query(
+      'INSERT INTO Saida ( data, estudante) VALUES ($1, $2) RETURNING id,  data, estudante',
+      [ data, estudante]
+    );
+
     // http status 201 - Created
     res.status(201).json({
       success: true,
