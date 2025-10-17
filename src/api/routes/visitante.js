@@ -5,16 +5,16 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
-/* GET - Buscar todos os estudantes */
+/* GET - Buscar todos os visitantes */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT * FROM estudante ORDER BY id');
+    const result = await pool.query('SELECT * FROM Visitante ORDER BY id');
     res.json({
       success: true,
       data: result.rows
     });
   } catch (error) {
-    console.error('Erro ao buscar os estudantes:', error);
+    console.error('Erro ao buscar os visitantes:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
@@ -24,17 +24,17 @@ router.get('/', verifyToken, async function(req, res) {
 });
 
 
-/* GET parametrizado - Buscar usuário por ID */
+/* GET parametrizado - Buscar visitante por ID */
 router.get('/:id', verifyToken, async function(req, res) {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM usuario WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM Visitante WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Usuário não encontrado'
+        message: 'Visitante não encontrado'
       });
     }
     
@@ -43,7 +43,7 @@ router.get('/:id', verifyToken, async function(req, res) {
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao buscar usuário:', error);
+    console.error('Erro ao buscar visitante:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
@@ -52,33 +52,32 @@ router.get('/:id', verifyToken, async function(req, res) {
   }
 });
 
-/* POST - Criar novo estudante */
+/* POST - Criar novo visitante */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { nome, nomeSocial, matricula, suspenso, foto, turma } = req.body;
+    const { nome, nomeSocial, tipoDeCadastrante, CPF, foto } = req.body;
     
     // Validação básica
-    if (!nome  || !matricula  || !foto  || !turma) {
+    if (!nome || !tipoDeCadastrante  || !CPF) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, matricula, seríe, foto são obrigatórios'
+        message: 'Nome, tipo de cadastrante e CPF são obrigatórios'
       });
     }
     
     // Verificar se a matricula já existe
-    const existingUser = await pool.query('SELECT id FROM estudante WHERE matricula = $1', [matricula]);
+    const existingUser = await pool.query('SELECT id FROM Visitante WHERE CPF = $1', [CPF]);
     if (existingUser.rows.length > 0) {
       return res.status(409).json({
         success: false,
-        message: 'Matrícula já está em uso'
+        message: 'CPF já está em uso'
       });
     }
 
-    // Insert
     const result = await pool.query(
-      'INSERT INTO estudante (nome, nomeSocial, matricula, suspenso, foto, turma) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, nome, nomeSocial, matricula, suspenso, foto, turma',
-      [nome, nomeSocial, matricula, suspenso, foto, turma]
+      'INSERT INTO Visitante ( nome, nomeSocial, tipoDeCadastrante, CPF, foto) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id,  nome, nomeSocial, tipoDeCadastrante, CPF, foto',
+      [ nome, nomeSocial, tipoDeCadastrante, CPF, foto]
     );
 
     // http status 201 - Created

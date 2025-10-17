@@ -45,7 +45,11 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
         message: 'Essa lista de ocorrencias já está em uso'
       });
     }
-
+    // Insert
+    const result = await pool.query(
+      'INSERT INTO Ocorrencias (uniforme, atraso, comportamento, estudante) VALUES ($1, $2, $3, $4) RETURNING id, uniforme, atraso, comportamento, estudante',
+      [uniforme, atraso, comportamento, estudante]
+    );
     // http status 201 - Created
     res.status(201).json({
       success: true,
