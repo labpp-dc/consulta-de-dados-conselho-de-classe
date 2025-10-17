@@ -40,7 +40,7 @@ CREATE TABLE Turmas (
     FOREIGN KEY (anoLetivo_id) REFERENCES AnoLetivo(id)
     -- CONSTRAINT ck_turma_serie CHECK a fazer
     -- Fazer um constraint para nome de turma
-
+    -- Criar atributo número para turma
 );
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular
     -- CONSTRAINT ck_usuario_senha_length CHECK (length(senha) >= 6), -- comprimento mínimo

@@ -11,12 +11,12 @@ var usersRouter = require('./routes/funcionario');
 var anoLetivoRouter = require('./routes/anoLetivo');
 var cursoRouter = require('./routes/curso');
 var emailRouter = require('./routes/email');
-var entradaRouter = require('./router/entrada');
-var estudanteRouter = require('./router/estudante');
-var ocorrenciaRouter = require('./router/ocorrencia');
-var saidaRouter = require('./router/saida');
-var turmaRouter = require('./router/turma');
-var visitanteRouter = require('./router/visitante');
+var entradaRouter = require('./routes/entrada');
+var estudanteRouter = require('./routes/estudante');
+var ocorrenciaRouter = require('./routes/ocorrencia');
+var saidaRouter = require('./routes/saida');
+var turmaRouter = require('./routes/turma');
+var visitanteRouter = require('./routes/visitante');
 
 
 var app = express();
