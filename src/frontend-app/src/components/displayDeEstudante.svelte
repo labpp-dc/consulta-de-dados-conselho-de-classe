@@ -4,6 +4,8 @@
     export var faltasPorcentagem =0;
     export var faltasTotais = 0;
     export var pagina = "";
+    import { Card, Button, Input, Label, Alert } from "flowbite-svelte";
+
 </script>
 
 <div>
@@ -12,10 +14,16 @@
         <div class="bg-red-500">{suspenso}</div>
     {/if}
 
-    {#if pagina != 'estudante'}
+    {#if pagina === 'terminalDeControle'}
         <div>
             <div>{faltasTotais}</div>
             <div>{faltasPorcentagem}</div>
         </div>
     {/if}
 </div>
+
+<Button 
+    type="submit"
+    class="w-full" 
+    >
+</Button>

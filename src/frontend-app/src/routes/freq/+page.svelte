@@ -1,9 +1,8 @@
 <script lang="ts">
   import { Heading, P, ImagePlaceholder } from "flowbite-svelte";
-  import Menu from '../../components/Menu.svelte';
 </script>
 
-<Menu />
+
 
 <div class="text-center p-8 pt-32">
   <Heading tag="h1" class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6">Sobre</Heading>
