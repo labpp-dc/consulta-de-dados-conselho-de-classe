@@ -19,6 +19,7 @@ CREATE TABLE Cursos (
 
     CONSTRAINT pk_curso PRIMARY KEY (id)
 );
+INSERT INTO Cursos (Nome) VALUES ('DS');
 
 CREATE TABLE AnoLetivo (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -26,6 +27,8 @@ CREATE TABLE AnoLetivo (
     
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
 );
+
+INSERT INTO AnoLetivo (Ano) VALUES ('2025');
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
     nome TEXT NOT NULL,

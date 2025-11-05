@@ -43,7 +43,7 @@ app.use('/entrada', entradaRouter);
 app.use('/estudante', estudanteRouter);
 app.use('/ocorrencia', ocorrenciaRouter);
 app.use('/saida', saidaRouter);
-app.use('/turma', turmaRouter);
+app.use('/turmas', turmaRouter);
 app.use('/visitante', visitanteRouter);
 
 // catch 404 and forward to error handler

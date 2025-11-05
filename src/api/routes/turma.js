@@ -34,7 +34,15 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, turno, serie, curso, anoLetivo são obrigatórios'
+        message: 'Nome, turno, serie, curso e anoLetivo são obrigatórios'
+      });
+    }
+    // Verificar se o curso indicado existe
+    const existingCurso = await pool.query('SELECT id FROM Cursos WHERE Nome = $1' , [curso]);
+    if (existingCurso.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Curso escolhido não existente'
       });
     }
     
@@ -91,12 +99,12 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     // Verificar se a turma existe
-    const userExists = await pool.query('SELECT id FROM Turma WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Turmas WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Turma não encontrado'
+        message: 'Turma não encontrada'
       });
     }
     
@@ -111,7 +119,7 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     let query, params;    
-    query = 'UPDATE Turma SET nome = $1, turno = $2, serie = $3, curso = $4, anoLetivo = $5 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma';
+    query = 'UPDATE Turmas SET nome = $1, turno = $2, serie = $3, curso = $4, anoLetivo = $5 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma';
     params = [ nome, turno, serie, curso, anoLetivo, id];    
     const result = await pool.query(query, params);
     
@@ -143,7 +151,7 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
     const { id } = req.params;
     
     // Verificar se o usuário existe
-    const userExists = await pool.query('SELECT id FROM Turma WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Turmas WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
@@ -152,7 +160,7 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
       });
     }
     
-    await pool.query('DELETE FROM Turma WHERE id = $1', [id]);
+    await pool.query('DELETE FROM Turmas WHERE id = $1', [id]);
     
     res.json({
       success: true,

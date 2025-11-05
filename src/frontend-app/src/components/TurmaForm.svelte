@@ -13,9 +13,11 @@
     nome: string;
     turno: string;
     serie: number;
+    curso: string;
+    anoLetivo: string;
   };
 
-  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0 }; // dados do form
+  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso: '', anoLetivo: ''}; // dados do form
   let loading = false;
   let error = '';
 
@@ -58,8 +60,6 @@
     console.log('Cancelar');
     goto('/turmas');
   }
-    let m: boolean = false;
-    $: turma.turno = m ? 'Manhã' : 'Tarde';
 </script>
 
 <!-- Card do formulário -->
@@ -79,36 +79,26 @@
       <Label for="nome">Nome</Label>
       <Input id="nome" bind:value={turma.nome} placeholder="Escreva o nome da turma" required class="mt-1" />
     </div>
-
-
-
-
     <!-- Campo turno -->
-
-
-
     <div>
-      <Label for="turno">
-      <Input id="turno" type="checkbox" bind:value={turma.turno} placeholder="Escreva o turno" required class="mt-1" />
-      Turno: {m ? 'Manhã' : 'Tarde'}
-        </Label>
+      <Label for="turno">Turno</Label>
+      <Input id="turno" type="turno" bind:value={turma.turno} placeholder="Escreva o turno" required class="mt-1" />
     </div>
     <!-- Campo serie -->
-    
-    
-    
-    
     <div>
       <Label for="serie">Serie</Label>
-      <Input id="serie" type="serie" bind:value={turma.serie} placeholder="Escreva o turno" required class="mt-1" />
+      <Input id="serie" type="serie" bind:value={turma.serie} placeholder="Escreva a série" required class="mt-1" />
     </div>
-
-
-
-
-
-
-
+    <!-- Campo curso -->
+    <div>
+      <Label for="curso">Curso</Label>
+      <Input id="curso" type="curso" bind:value={turma.curso} placeholder="Escreva o curso" required class="mt-1" />
+    </div>
+    <!-- Campo ano letivo -->
+    <div>
+      <Label for="anoLetivo">Ano letivo</Label>
+      <Input id="anoLetivo" type="anoLetivo" bind:value={turma.anoLetivo} placeholder="Escreva o ano letivo" required class="mt-1" />
+    </div>
     <!-- Botões de ação -->
     <div class="flex gap-4 justify-end mt-4">
       <!-- Botão cancelar/voltar -->
@@ -117,7 +107,7 @@
         {id === null ? 'Voltar' : 'Cancelar'}
       </Button>
       <!-- Botão salvar -->
-      <Button type="submit" color="primary" disabled={loading}>
+      <Button type="submit" color="blue" disabled={loading}>
         <FloppyDiskAltOutline class="inline w-5 h-5 mr-2 align-text-bottom" />
         {id === null ? 'Cadastrar' : 'Salvar'}
       </Button>
