@@ -9,7 +9,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 // requer usuário autenticado como admin
 router.get('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const result = await pool.query('SELECT id, login, role FROM usuario ORDER BY id');
+    const result = await pool.query('SELECT id, login, role FROM Funcionario ORDER BY id');
     res.json({
       success: true,
       data: result.rows
@@ -58,7 +58,7 @@ router.get('/me', verifyToken, async function(req, res) {
 router.get('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT id, login, role FROM usuario WHERE id = $1', [id]);
+    const result = await pool.query('SELECT id, login, role FROM Funcionario WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -97,7 +97,7 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     }
     
     // Verificar se o login já existe
-    const existingUser = await pool.query('SELECT id FROM usuario WHERE login = $1', [login]);
+    const existingUser = await pool.query('SELECT id FROM Funcionario WHERE login = $1', [login]);
     if (existingUser.rows.length > 0) {
       return res.status(409).json({
         success: false,
@@ -145,7 +145,7 @@ router.post('/login', async function(req, res) {
     // obtém o usuário do banco de dados
     const result = await pool.query(`SELECT 
       id, login, senha as passwordHash, role
-      FROM usuario 
+      FROM Funcionario 
       WHERE login = $1`, [login]);
 
     /*
@@ -237,7 +237,7 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     // Verificar se o usuário existe
-    const userExists = await pool.query('SELECT id FROM usuario WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Funcionario WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
@@ -247,7 +247,7 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     // Verificar se o login já está em uso por outro usuário
-    const existingUser = await pool.query('SELECT id FROM usuario WHERE login = $1 AND id != $2', [login, id]);
+    const existingUser = await pool.query('SELECT id FROM Funcionario WHERE login = $1 AND id != $2', [login, id]);
     if (existingUser.rows.length > 0) {
       // https status 409 - Conflict
       return res.status(409).json({
@@ -261,11 +261,11 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     if (senha && senha.trim() !== '') {
       // Atualizar com nova senha
       const hashedPassword = await bcrypt.hash(senha, 12);
-      query = 'UPDATE usuario SET login = $1, senha = $2, role = $3 WHERE id = $4 RETURNING id, login, role';
+      query = 'UPDATE Funcionario SET login = $1, senha = $2, role = $3 WHERE id = $4 RETURNING id, login, role';
       params = [login, hashedPassword, role, id];
     } else {
       // Atualizar sem alterar senha
-      query = 'UPDATE usuario SET login = $1, role = $2 WHERE id = $3 RETURNING id, login, role';
+      query = 'UPDATE Funcionario SET login = $1, role = $2 WHERE id = $3 RETURNING id, login, role';
       params = [login, role, id];
     }
     
@@ -299,7 +299,7 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
     const { id } = req.params;
     
     // Verificar se o usuário existe
-    const userExists = await pool.query('SELECT id FROM usuario WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Funcionario WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
@@ -308,7 +308,7 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
       });
     }
     
-    await pool.query('DELETE FROM usuario WHERE id = $1', [id]);
+    await pool.query('DELETE FROM Funcionario WHERE id = $1', [id]);
     
     res.json({
       success: true,
