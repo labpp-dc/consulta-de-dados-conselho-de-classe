@@ -1,3 +1,4 @@
+-- Active: 1762377016545@@127.0.0.1@5432@frequencia@public
 DROP TABLE IF EXISTS Cursos;
 DROP TABLE IF EXISTS AnoLetivo;
 DROP TABLE IF EXISTS Turmas;
@@ -137,7 +138,7 @@ CREATE TABLE Funcionario(
     role TEXT NOT NULL,
 
     CONSTRAINT pk_funcionario PRIMARY KEY (id)
-)
+);
     INSERT INTO Funcionario (login, senha, role) VALUES ('admin', '$2b$10$ypakIosLzNJNf3BvwAiys.Hthfykp7Zp/YealuGcgPfQhO85FNUPO', 'admin');
     --372586801668
 

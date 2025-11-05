@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-  <title>Login - Projeto Modelo 2025</title>
+  <title>Login - Controle de frequência</title>
 </svelte:head>
 
 <div class="h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
