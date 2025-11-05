@@ -1,4 +1,3 @@
--- Active: 1762377016545@@127.0.0.1@5432@frequencia
 DROP TABLE IF EXISTS Cursos;
 DROP TABLE IF EXISTS AnoLetivo;
 DROP TABLE IF EXISTS Turmas;
@@ -71,7 +70,7 @@ CREATE TABLE TurmaEstudante (
     turma_id INTEGER NOT NULL,
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id),
-    FOREIGN KEY (estudante_id) REFERENCES Turmas(id)
+    FOREIGN KEY (estudante_id) REFERENCES estudante(id)
 
 );
 
@@ -100,7 +99,6 @@ CREATE TABLE Entrada(
 
 CREATE TABLE Saida(
     id bigint GENERATED ALWAYS AS IDENTITY,
-    FOREIGN KEY (estudante) REFERENCES estudante(id),
     data TIMESTAMP NOT NULL,
 
     CONSTRAINT pk_saida PRIMARY KEY (id),
@@ -114,7 +112,7 @@ CREATE TABLE Ocorrencias(
     comportamento TEXT,
     data TIMESTAMP NOT NULL,
 
-    CONSTRAINT pk_saida PRIMARY KEY (id),
+    CONSTRAINT pk_ocorrencias PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY(estudante_id) REFERENCES estudante(id)
 );
