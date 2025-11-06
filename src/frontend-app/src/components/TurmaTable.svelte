@@ -12,6 +12,8 @@
     nome: string;
     turno: string;
     serie: number;
+    curso: string;
+    anoLetivo: string;
   };
 
   let turmas: Turma[] = []; // lista de usuários
@@ -85,8 +87,10 @@
       <TableHead>
         <TableHeadCell class="w-16">ID</TableHeadCell>
         <TableHeadCell class="w-32">Nome</TableHeadCell>
-        <TableHeadCell class="min-w-0">Turno</TableHeadCell>
-        <TableHeadCell class="w-20">Série</TableHeadCell>
+        <TableHeadCell class="w-16">Turno</TableHeadCell>
+        <TableHeadCell class="w-16">Série</TableHeadCell>
+        <TableHeadCell class="min-w-0">Curso</TableHeadCell>
+        <TableHeadCell class="w-32">Ano Letivo</TableHeadCell>
         <TableHeadCell class="w-24"></TableHeadCell> <!-- coluna para editar/remover -->
       </TableHead>
       <TableBody>
@@ -96,6 +100,8 @@
             <TableBodyCell>{turma.nome}</TableBodyCell>
             <TableBodyCell class="truncate max-w-0">{turma.turno}</TableBodyCell>
             <TableBodyCell>{turma.serie}</TableBodyCell>
+            <TableBodyCell>{turma.curso}</TableBodyCell>
+            <TableBodyCell>{turma.anoLetivo}</TableBodyCell>
             <TableBodyCell>
               <!-- Botão editar -->
               <button
@@ -129,6 +135,8 @@
           <div class="px-4 pt-4 pb-2 bg-gray-100 text-left flex items-center justify-between">
             <div>
               <div class="text-lg font-semibold text-gray-800 text-left">{turma.nome}</div>
+              <div class="text-lg font-semibold text-gray-800 text-left">{turma.curso}</div>
+              <div class="text-lg font-semibold text-gray-800 text-left">{turma.anoLetivo}</div>
               <div class="text-xs text-gray-400 text-left">ID: {turma.id}</div>
             </div>
             <div class="flex gap-2">
