@@ -8,7 +8,7 @@
             nome:""
         },
         {
-            nome:"", turno:"", serie:"", curso:"", anoLetivo:0;
+            nome:"", turno:"", serie:"", curso:"", anoLetivo:0
         }
     ]
     import api from '$lib/api'; // API backend
