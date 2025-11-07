@@ -142,7 +142,7 @@ CREATE TABLE Funcionario(
 
     CONSTRAINT pk_funcionario PRIMARY KEY (id)
 );
-    INSERT INTO Funcionario (login, senha, role) VALUES ('admin', '$2a$12$GXhZVtGDmHhhP95iMfhGo.M79bQA0fuNG8Xs5I2n4UERgbX4wsSBO', 'admin');
+    INSERT INTO Funcionario (login, senha, role) VALUES ('admin', '$2b$10$ypakIosLzNJNf3BvwAiys.Hthfykp7Zp/YealuGcgPfQhO85FNUPO', 'admin');
     --372586801668
 
 
