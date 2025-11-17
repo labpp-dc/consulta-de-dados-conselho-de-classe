@@ -30,7 +30,7 @@
         turma = { ...res.data.data};
         console.log(turma);
       } catch (e) {
-        error = 'Erro ao carregar usuário.';
+        error = 'Erro ao carregar turma.';
       } finally {
         loading = false;
       }
@@ -94,6 +94,12 @@
     <div>
       <Label for="curso">Curso</Label>
       <Input id="curso" type="curso" bind:value={turma.curso_id} placeholder="Escreva o curso" required class="mt-1" />
+
+      <!-- <select name="curso" id="curso">
+        {#each cursos as curso}
+          <option value={curso[0]}>{curso[1]}</option>
+        {/each}
+      </select>-->
     </div>
     <!-- Campo ano letivo -->
     <div>
