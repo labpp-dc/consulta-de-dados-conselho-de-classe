@@ -13,11 +13,11 @@
     nome: string;
     turno: string;
     serie: number;
-    curso: string;
-    anoLetivo: string;
+    curso_id: string;
+    anoLetivo_id: string;
   };
 
-  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso: '', anoLetivo: ''}; // dados do form
+  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso_id: '', anoLetivo_id: ''}; // dados do form
   let loading = false;
   let error = '';
 
@@ -30,7 +30,7 @@
         turma = { ...res.data.data};
         console.log(turma);
       } catch (e) {
-        error = 'Erro ao carregar usuário.';
+        error = 'Erro ao carregar turma.';
       } finally {
         loading = false;
       }
@@ -46,6 +46,7 @@
       if (id === null) {
         await api.post('/turmas', turmaData);
       } else {
+        console.log(turmaData)
         await api.put(`/turmas/${id}`, turmaData);
       }
       goto('/turmas');
@@ -92,12 +93,18 @@
     <!-- Campo curso -->
     <div>
       <Label for="curso">Curso</Label>
-      <Input id="curso" type="curso" bind:value={turma.curso} placeholder="Escreva o curso" required class="mt-1" />
+      <Input id="curso" type="curso" bind:value={turma.curso_id} placeholder="Escreva o curso" required class="mt-1" />
+
+      <!-- <select name="curso" id="curso">
+        {#each cursos as curso}
+          <option value={curso[0]}>{curso[1]}</option>
+        {/each}
+      </select>-->
     </div>
     <!-- Campo ano letivo -->
     <div>
       <Label for="anoLetivo">Ano letivo</Label>
-      <Input id="anoLetivo" type="anoLetivo" bind:value={turma.anoLetivo} placeholder="Escreva o ano letivo" required class="mt-1" />
+      <Input id="anoLetivo" type="anoLetivo" bind:value={turma.anoLetivo_id} placeholder="Escreva o ano letivo" required class="mt-1" />
     </div>
     <!-- Botões de ação -->
     <div class="flex gap-4 justify-end mt-4">

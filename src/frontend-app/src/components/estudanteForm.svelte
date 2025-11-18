@@ -16,7 +16,7 @@
         nomeSocial:string;
         matricula:string;
         suspenso:number;
-        foto:string;
+        foto:string | ArrayBuffer;
         turma:number;
     };
   
@@ -72,9 +72,9 @@
             reader.onload = event => {
                  thumbnail = event?.target?.result;
                  if (event?.target?.result) {
-                    ong.img = event.target.result;
+                  estudante.foto = event.target.result;
                  } else {
-                  ong.img = "";
+                  estudante.foto = "";
                  }
                  
             };
