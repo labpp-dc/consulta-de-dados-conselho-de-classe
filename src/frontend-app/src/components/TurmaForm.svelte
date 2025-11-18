@@ -7,7 +7,14 @@
   import { ArrowLeftOutline, FloppyDiskAltOutline } from 'flowbite-svelte-icons'; // ícones
 
   export let id: number | null = null; // id da turma
-
+  type Ano = {
+    id: number;
+    Ano: string;
+  };
+  type Curso = {
+    id: number;
+    Nome: string;
+  };
   type Turma = {
     id: number;
     nome: string;
@@ -16,7 +23,8 @@
     curso_id: string;
     anoLetivo_id: string;
   };
-
+  let anoLetivos: Ano[]
+  let cursos: Curso[] 
   let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso_id: '', anoLetivo_id: ''}; // dados do form
   let loading = false;
   let error = '';
@@ -26,6 +34,20 @@
     if (id !== null) {
       loading = true;
       try {
+        const res = await api.get(`/curso`);
+        cursos = { ...res.data};
+        console.log(cursos);
+      } catch (e) {
+        error = 'Erro ao carregar cursos.';
+      } 
+      try {
+        const res = await api.get(`/anoLetivo`);
+        anoLetivos = { ...res.data};
+        console.log(anoLetivos);
+      } catch (e) {
+        error = 'Erro ao carregar anos letivos.';
+      } 
+      try {
         const res = await api.get(`/turmas/${id}`);
         turma = { ...res.data.data};
         console.log(turma);
@@ -34,6 +56,7 @@
       } finally {
         loading = false;
       }
+      
     } 
   });
 
@@ -88,24 +111,35 @@
     <!-- Campo serie -->
     <div>
       <Label for="serie">Serie</Label>
-      <Input id="serie" type="serie" bind:value={turma.serie} placeholder="Escreva a série" required class="mt-1" />
+      <select name="serie" id="serie" bind:value={turma.serie}>
+        <option value=0> 1 ano</option>
+        <option value=1> 2 ano</option>
+        <option value=2> 3 ano</option>
+
+      </select>
     </div>
     <!-- Campo curso -->
+
     <div>
       <Label for="curso">Curso</Label>
-      <Input id="curso" type="curso" bind:value={turma.curso_id} placeholder="Escreva o curso" required class="mt-1" />
-
-      <!-- <select name="curso" id="curso">
+      <select name="curso" id="curso" bind:value={turma.curso_id}>
         {#each cursos as curso}
-          <option value={curso[0]}>{curso[1]}</option>
+          <option value={curso.id}>{curso.Nome}</option>
         {/each}
-      </select>-->
+      </select>
     </div>
+
     <!-- Campo ano letivo -->
+
     <div>
-      <Label for="anoLetivo">Ano letivo</Label>
-      <Input id="anoLetivo" type="anoLetivo" bind:value={turma.anoLetivo_id} placeholder="Escreva o ano letivo" required class="mt-1" />
+      <Label for="anoLetivo">Ano Letivo</Label>
+      <select name="anoLetivo" id="anoLetivo" bind:value={turma.anoLetivo_id}>
+        {#each anoLetivos as anoLetivo}
+          <option value={anoLetivo.id}>{anoLetivo.Ano}</option>
+        {/each}
+      </select>
     </div>
+
     <!-- Botões de ação -->
     <div class="flex gap-4 justify-end mt-4">
       <!-- Botão cancelar/voltar -->
