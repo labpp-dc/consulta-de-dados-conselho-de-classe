@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 /* GET - Buscar todas os anos letivos */
@@ -14,7 +12,7 @@ router.get('/', verifyToken, async function(req, res) {
       data: result.rows
     });
   } catch (error) {
-    console.error('Erro ao buscar os ano letivos:', error);
+    console.error('Erro ao buscar os anos letivos:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,

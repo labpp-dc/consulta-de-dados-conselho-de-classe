@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 
@@ -26,10 +24,10 @@ router.get('/', verifyToken, async function(req, res) {
 /* POST - Criar nova lista de saida */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { data, estudante} = req.body;
+    const { data, estudante_id} = req.body;
     
     // Validação básica
-    if (!data || !estudante) {
+    if (!data || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -48,18 +46,18 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 
     //Insert
     const result = await pool.query(
-      'INSERT INTO Saida ( data, estudante) VALUES ($1, $2) RETURNING id,  data, estudante',
-      [ data, estudante]
+      'INSERT INTO Saida ( data, estudante_id) VALUES ($1, $2) RETURNING id,  data, estudante_id',
+      [ data, estudante_id]
     );
 
     // http status 201 - Created
     res.status(201).json({
       success: true,
-      message: 'Lista de saida registrada com sucesso',
+      message: 'Lista de saída registrada com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao registrar lista de saida:', error);
+    console.error('Erro ao registrar lista de saída:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -79,10 +77,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { data, estudante } = req.body;
+    const { data, estudante_id } = req.body;
     
     // Validação básica
-    if (!data || !estudante) {
+    if (!data || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -96,23 +94,23 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Lista de saida não encontrada'
+        message: 'Lista de saída não encontrada'
       });
     }
     
     
     let query, params;    
-    query = 'UPDATE Saida SET data = $1, estudante= $2  WHERE id = $3 RETURNING id, estudante';
-    params = [ data, estudante, id];    
+    query = 'UPDATE Saida SET data = $1, estudante_id = $2  WHERE id = $3 RETURNING id, estudante_id';
+    params = [ data, estudante_id, id];    
     const result = await pool.query(query, params);
     
     res.json({
       success: true,
-      message: 'Lista de saida atualizado com sucesso',
+      message: 'Lista de saída atualizada com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao atualizar lista de saida:', error);
+    console.error('Erro ao atualizar lista de saída:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -139,7 +137,7 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Lista de saida não encontrada'
+        message: 'Lista de saída não encontrada'
       });
     }
     
@@ -147,10 +145,10 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
     
     res.json({
       success: true,
-      message: 'Lista de saida deletada com sucesso'
+      message: 'Lista de saída deletada com sucesso'
     });
   } catch (error) {
-    console.error('Erro ao deletar lista de saida:', error);
+    console.error('Erro ao deletar lista de saída:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,

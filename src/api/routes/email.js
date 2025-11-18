@@ -1,18 +1,16 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 
 /* POST - Criar novo email */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { endereco, estudante} = req.body;
+    const { endereco, estudante_id} = req.body;
     
     // Validação básica
-    if (!endereco || !estudante) {
+    if (!endereco || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -30,8 +28,8 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     }
     //Insert
     const result = await pool.query(
-      'INSERT INTO email (endereco, estudante) VALUES ($1, $2) RETURNING id, endereco, estudante',
-      [endereco, estudante]
+      'INSERT INTO email (endereco, estudante_id) VALUES ($1, $2) RETURNING id, endereco, estudante_id',
+      [endereco, estudante_id]
     );
     // http status 201 - Created
     res.status(201).json({
@@ -60,10 +58,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { endereco, estudante } = req.body;
+    const { endereco, estudante_id } = req.body;
     
     // Validação básica
-    if (!endereco || !estudante) {
+    if (!endereco || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -83,8 +81,8 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     
     
     let query, params;    
-    query = 'UPDATE email SET endereco = $1, estudante = $2  WHERE id = $3 RETURNING id,  endereco, estudante';
-    params = [ endereco, estudante, id];    
+    query = 'UPDATE email SET endereco = $1, estudante_id = $2  WHERE id = $3 RETURNING id,  endereco, estudante_id';
+    params = [ endereco, estudante_id, id];    
     const result = await pool.query(query, params);
     
     res.json({

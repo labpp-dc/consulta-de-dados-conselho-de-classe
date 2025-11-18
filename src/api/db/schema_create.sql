@@ -108,7 +108,7 @@ CREATE TABLE Saida(
     CONSTRAINT pk_saida PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY(estudante_id) REFERENCES estudante(id)
-    );
+);
 CREATE TABLE Ocorrencias(
     id bigint GENERATED ALWAYS AS IDENTITY,
     uniforme TEXT,

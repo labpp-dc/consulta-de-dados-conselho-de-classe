@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 /* GET - Buscar todos os estudantes */
@@ -55,14 +53,14 @@ router.get('/:id', verifyToken, async function(req, res) {
 /* POST - Criar novo estudante */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { nome, nomeSocial, matricula, suspenso, foto, turma } = req.body;
+    const { nome, nomeSocial, matricula, suspenso, foto, turma_id } = req.body;
     
     // Validação básica
-    if (!nome  || !matricula  || !foto  || !turma) {
+    if (!nome  || !matricula  || !foto  || !turma_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, matricula, seríe, foto são obrigatórios'
+        message: 'Nome, matrícula, série e foto são obrigatórios'
       });
     }
     
@@ -77,18 +75,18 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 
     // Insert
     const result = await pool.query(
-      'INSERT INTO estudante (nome, nomeSocial, matricula, suspenso, foto, turma) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, nome, nomeSocial, matricula, suspenso, foto, turma',
-      [nome, nomeSocial, matricula, suspenso, foto, turma]
+      'INSERT INTO estudante (nome, nomeSocial, matricula, suspenso, foto, turma_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, nome, nomeSocial, matricula, suspenso, foto, turma_id',
+      [nome, nomeSocial, matricula, suspenso, foto, turma_id]
     );
 
     // http status 201 - Created
     res.status(201).json({
       success: true,
-      message: 'Estudante criado com sucesso',
+      message: 'Estudante cadastrado com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao criar estudante:', error);
+    console.error('Erro ao cadastrar estudante:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -108,14 +106,14 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { nome, nomeSocial, matricula, suspenso, foto, turma } = req.body;
+    const { nome, nomeSocial, matricula, suspenso, foto, turma_id } = req.body;
     
     // Validação básica
-    if (!nome  || !matricula  || !foto  || !turma) {
+    if (!nome  || !matricula  || !foto  || !turma_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, matricula, foto são obrigatórios'
+        message: 'Nome, matricula e foto são obrigatórios'
       });
     }
     
@@ -140,8 +138,8 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     let query, params;    
-    query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, suspenso = $4, foto = $5, turma = $6 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma';
-    params = [ nome, nomeSocial, matricula, suspenso, foto, turma, id];    
+    query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, suspenso = $4, foto = $5, turma_id = $6 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma_id';
+    params = [ nome, nomeSocial, matricula, suspenso, foto, turma_id, id];    
     const result = await pool.query(query, params);
     
     res.json({

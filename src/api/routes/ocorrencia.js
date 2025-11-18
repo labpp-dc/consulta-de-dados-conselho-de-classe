@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 
@@ -15,7 +13,7 @@ router.get('/', verifyToken, async function(req, res) {
         data: result.rows
       });
     } catch (error) {
-      console.error('Erro ao buscar as ocorrencias:', error);
+      console.error('Erro ao buscar as ocorrências:', error);
       // http status 500 - Internal Server Error
       res.status(500).json({
         success: false,
@@ -26,10 +24,10 @@ router.get('/', verifyToken, async function(req, res) {
 /* POST - Criar nova lista de ocorrencias */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { uniforme, atraso, comportamento, estudante} = req.body;
+    const { uniforme, atraso, comportamento, estudante_id} = req.body;
     
     // Validação básica
-    if (!data || !estudante) {
+    if (!data || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -42,22 +40,22 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     if (existingUser.rows.length > 0) {
       return res.status(409).json({
         success: false,
-        message: 'Essa lista de ocorrencias já está em uso'
+        message: 'Essa lista de ocorrências já está em uso'
       });
     }
     // Insert
     const result = await pool.query(
-      'INSERT INTO Ocorrencias (uniforme, atraso, comportamento, estudante) VALUES ($1, $2, $3, $4) RETURNING id, uniforme, atraso, comportamento, estudante',
-      [uniforme, atraso, comportamento, estudante]
+      'INSERT INTO Ocorrencias (uniforme, atraso, comportamento, estudante_id) VALUES ($1, $2, $3, $4) RETURNING id, uniforme, atraso, comportamento, estudante_id',
+      [uniforme, atraso, comportamento, estudante_id]
     );
     // http status 201 - Created
     res.status(201).json({
       success: true,
-      message: 'Lista de ocorrencias registrada com sucesso',
+      message: 'Lista de ocorrências registrada com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao registrar lista de ocorrencias:', error);
+    console.error('Erro ao registrar lista de ocorrências:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -77,10 +75,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { uniforme, atraso, comportamento, data, estudante } = req.body;
+    const { uniforme, atraso, comportamento, data, estudante_id } = req.body;
     
     // Validação básica
-    if (!data || !estudante) {
+    if (!data || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -94,23 +92,23 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Lista de ocorrencias não encontrada'
+        message: 'Lista de ocorrências não encontrada'
       });
     }
     
     
     let query, params;    
-    query = 'UPDATE Ocorrencias SET uniforme= $1, atraso= $2, comportamento= $3, data = $4, estudante= $5  WHERE id = $6 RETURNING id, uniforme, atraso, comportamento, data, estudante';
-    params = [ uniforme, atraso, comportamento, data, estudante, id];    
+    query = 'UPDATE Ocorrencias SET uniforme= $1, atraso= $2, comportamento= $3, data = $4, estudante_id = $5  WHERE id = $6 RETURNING id, uniforme, atraso, comportamento, data, estudante_id';
+    params = [ uniforme, atraso, comportamento, data, estudante_id, id];    
     const result = await pool.query(query, params);
     
     res.json({
       success: true,
-      message: 'Lista de ocorrencias atualizado com sucesso',
+      message: 'Lista de ocorrências atualizado com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao atualizar lista de ocorrencias:', error);
+    console.error('Erro ao atualizar lista de ocorrências:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -145,10 +143,10 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
     
     res.json({
       success: true,
-      message: 'Lista de saida deletada com sucesso'
+      message: 'Lista de ocorrências deletada com sucesso'
     });
   } catch (error) {
-    console.error('Erro ao deletar lista de saida:', error);
+    console.error('Erro ao deletar lista de ocorrências:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,

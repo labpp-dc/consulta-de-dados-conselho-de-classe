@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 
@@ -26,10 +24,10 @@ router.get('/', verifyToken, async function(req, res) {
 /* POST - Criar nova lista de entrada */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { data, almoco, estudante} = req.body;
+    const { data, almoco, estudante_id} = req.body;
     
     // Validação básica
-    if (!data || !estudante) {
+    if (!data || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -47,8 +45,8 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     }
     //Insert
     const result = await pool.query(
-      'INSERT INTO Entrada ( data, almoco, estudante) VALUES ($1, $2, $3) RETURNING id,  data, almoco, estudante',
-      [ data, almoco, estudante]
+      'INSERT INTO Entrada ( data, almoco, estudante_id) VALUES ($1, $2, $3) RETURNING id,  data, almoco, estudante_id',
+      [ data, almoco, estudante_id]
     );
     // http status 201 - Created
     res.status(201).json({
@@ -77,10 +75,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { data, estudante } = req.body;
+    const { data, estudante_id } = req.body;
     
     // Validação básica
-    if (!data || !estudante) {
+    if (!data || !estudante_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -100,13 +98,13 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     
     
     let query, params;    
-    query = 'UPDATE Entrada SET data = $1, almoco = $2, estudante= $3  WHERE id = $4 RETURNING id,  data, almoco, estudante';
-    params = [ data, almoco, estudante, id];    
+    query = 'UPDATE Entrada SET data = $1, almoco = $2, estudante_id= $3  WHERE id = $4 RETURNING id,  data, almoco, estudante_id';
+    params = [ data, almoco, estudante_id, id];    
     const result = await pool.query(query, params);
     
     res.json({
       success: true,
-      message: 'Lista de entrada atualizado com sucesso',
+      message: 'Lista de entrada atualizada com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
