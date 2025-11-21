@@ -10,6 +10,14 @@
     
     let thumbnail;
 
+    type Turma = {
+    id: number;
+    nome: string;
+    turno: string;
+    serie: number;
+    curso_id: string;
+    anoLetivo_id: string;
+    };
     type Estudante = {
         id: number;
         nome:string; 
@@ -17,15 +25,22 @@
         matricula:string;
         suspenso:number;
         foto:string | ArrayBuffer;
-        turma:number;
+        turma_id:number;
     };
-  
+    let turmas: Turma[] =[];
     let estudante: Estudante = { id: 0, nome: '', nomeSocial: '', matricula: '', suspenso: 0, foto: '',turma:0 }; // dados do form
     let loading = false;
     let error = '';
   
     // Carrega estudante se for edição
     onMount(async () => {
+      try {
+        const res = await api.get(`/turmas`);
+        turmas = res.data.data;
+        console.log(turmas);
+      } catch (e) {
+        error = 'Erro ao carregar turmas.';
+      } 
       if (id !== null) {
         loading = true;
         try {
@@ -117,7 +132,11 @@
       <!-- Campo turma -->
       <div>
         <Label for="turma">Turma</Label>
-        <Input id="turma" bind:value={estudante.turma} placeholder="Escreva a turma" required class="mt-1" />
+      <select name="turma" id="turma" bind:value={estudante.turma_id}>
+        {#each turmas as turma}
+          <option value={turma.id}>{turma.nome}</option>
+        {/each}
+      </select>
       </div>
 
        <!-- Campo imagem -->
