@@ -28,7 +28,7 @@
         turma_id:number;
     };
     let turmas: Turma[] =[];
-    let estudante: Estudante = { id: 0, nome: '', nomeSocial: '', matricula: '', suspenso: 0, foto: '',turma:0 }; // dados do form
+    let estudante: Estudante = { id: 0, nome: '', nomeSocial: '', matricula: '', suspenso: 0, foto: '', turma_id:0 }; // dados do form
     let loading = false;
     let error = '';
   
