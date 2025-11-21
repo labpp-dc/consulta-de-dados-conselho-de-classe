@@ -9,11 +9,11 @@
   export let id: number | null = null; // id da turma
   type Ano = {
     id: number;
-    Ano: string;
+    ano: string;
   };
   type Curso = {
     id: number;
-    Nome: string;
+    nome: string;
   };
   type Turma = {
     id: number;
@@ -23,30 +23,32 @@
     curso_id: string;
     anoLetivo_id: string;
   };
-  let anoLetivos: Ano[]
-  let cursos: Curso[] 
+  let anoLetivos: Ano[] =[];
+  let cursos: Curso[] =[];
   let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso_id: '', anoLetivo_id: ''}; // dados do form
   let loading = false;
   let error = '';
 
+  
   // Carrega turma se for edição
   onMount(async () => {
-    if (id !== null) {
-      loading = true;
-      try {
+    try {
         const res = await api.get(`/curso`);
-        cursos = { ...res.data};
+        cursos = res.data.data;
         console.log(cursos);
       } catch (e) {
         error = 'Erro ao carregar cursos.';
       } 
       try {
         const res = await api.get(`/anoLetivo`);
-        anoLetivos = { ...res.data};
+        anoLetivos = res.data.data;
         console.log(anoLetivos);
       } catch (e) {
         error = 'Erro ao carregar anos letivos.';
       } 
+    if (id !== null) {
+      loading = true;
+     
       try {
         const res = await api.get(`/turmas/${id}`);
         turma = { ...res.data.data};
@@ -101,12 +103,12 @@
     <!-- Campo nome -->
     <div>
       <Label for="nome">Nome</Label>
-      <Input id="nome" bind:value={turma.nome} placeholder="Escreva o nome da turma" required class="mt-1" />
+      <Input id="nome" type="text" bind:value={turma.nome} placeholder="Escreva o nome da turma" required class="mt-1" />
     </div>
     <!-- Campo turno -->
     <div>
       <Label for="turno">Turno</Label>
-      <Input id="turno" type="turno" bind:value={turma.turno} placeholder="Escreva o turno" required class="mt-1" />
+      <Input id="turno" type="text" bind:value={turma.turno} placeholder="Escreva o turno" required class="mt-1" />
     </div>
     <!-- Campo serie -->
     <div>
@@ -124,7 +126,7 @@
       <Label for="curso">Curso</Label>
       <select name="curso" id="curso" bind:value={turma.curso_id}>
         {#each cursos as curso}
-          <option value={curso.id}>{curso.Nome}</option>
+          <option value={curso.id}>{curso.nome}</option>
         {/each}
       </select>
     </div>
@@ -135,7 +137,7 @@
       <Label for="anoLetivo">Ano Letivo</Label>
       <select name="anoLetivo" id="anoLetivo" bind:value={turma.anoLetivo_id}>
         {#each anoLetivos as anoLetivo}
-          <option value={anoLetivo.id}>{anoLetivo.Ano}</option>
+          <option value={anoLetivo.id}>{anoLetivo.ano}</option>
         {/each}
       </select>
     </div>

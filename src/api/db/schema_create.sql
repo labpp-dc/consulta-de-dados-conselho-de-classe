@@ -27,8 +27,8 @@ CREATE TABLE AnoLetivo (
     
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
 );
-
 INSERT INTO AnoLetivo (Ano) VALUES ('2025');
+
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
     nome TEXT NOT NULL,
