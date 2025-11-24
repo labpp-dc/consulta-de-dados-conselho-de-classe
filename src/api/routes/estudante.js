@@ -26,13 +26,13 @@ router.get('/', verifyToken, async function(req, res) {
 router.get('/:id', verifyToken, async function(req, res) {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM usuario WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM estudante WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Usuário não encontrado'
+        message: 'Estudante não encontrado'
       });
     }
     
@@ -113,7 +113,7 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, matricula e foto são obrigatórios'
+        message: 'Nome, matrícula e foto são obrigatórios'
       });
     }
     

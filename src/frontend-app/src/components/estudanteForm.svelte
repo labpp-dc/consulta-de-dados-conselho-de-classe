@@ -156,11 +156,11 @@
           <p class="mt-2 text-sm text-gray-600">
             <span class="font-semibold">Clique para fazer upload</span> ou arraste e solte
           </p>
-          <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF até 10MB</p>
+          <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF e WEBP até 10MB</p>
         </div>
       </label>
       <!--<input id="file-upload" type="file" class="sr-only" accept="image/*" on:change={handleFileChange}>-->
-        <input id="file-upload" style="display:none" type="file" accept=".jpg, .jpeg, .png" on:change={(e)=>handleFileChange(e)} >
+        <input id="file-upload" style="display:none" type="file" accept=".jpg, .jpeg, .png, .webp" on:change={(e)=>handleFileChange(e)} >
       {/if}
       
     </div>
