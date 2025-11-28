@@ -10,7 +10,7 @@
   type Estudante = {
     id: number;
     nome:string; 
-    nomeSocial:string; 
+    nomesocial:string; 
     matricula:string;
     suspenso:number;
     foto:string | ArrayBuffer;
@@ -84,7 +84,8 @@
   <!-- Tabela para telas médias/grandes -->
   <div class="hidden xl:block">
     <!-- Tabela de usuários -->
-    <Table class="w-full max-w-5xl mx-auto my-8 shadow-lg border border-gray-200 rounded-lg">
+    <Table class="w-full max-w-7xl
+    mx-auto my-8 shadow-lg border border-gray-200 rounded-lg">
       <TableHead>
         <TableHeadCell class="w-32">Nome</TableHeadCell>
         <TableHeadCell class="w-16">Nome Social</TableHeadCell>
@@ -97,9 +98,21 @@
         {#each estudante as estudante}
           <TableBodyRow>
             <TableBodyCell>{estudante.nome}</TableBodyCell>
-            <TableBodyCell>{estudante.nomeSocial}</TableBodyCell>
+            <TableBodyCell>
+              {#if estudante.nomesocial}
+                {estudante.nomesocial}
+              {:else}
+                Não possui
+              {/if}
+              </TableBodyCell>
             <TableBodyCell>{estudante.matricula}</TableBodyCell>
-            <TableBodyCell>{estudante.suspenso}</TableBodyCell>
+            <TableBodyCell>
+              {#if estudante.suspenso === 1}
+                Suspenso
+              {:else}
+                Livre
+              {/if}
+            </TableBodyCell>
             <TableBodyCell>{estudante.turma_id}</TableBodyCell>
             <TableBodyCell>
               <!-- Botão editar -->

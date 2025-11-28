@@ -126,7 +126,10 @@
       <!-- Campo curso -->
       <div>
         <Label for="suspenso">Suspenso</Label>
-        <Input id="suspenso" bind:value={estudante.suspenso} placeholder="Suspenso ou não" required class="mt-1" />
+        <select name="suspenso" id="suspenso" bind:value={estudante.suspenso}>
+            <option value=1>Suspenso</option>
+            <option value=0>Livre</option>
+        </select>
       </div>
 
       <!-- Campo turma -->
