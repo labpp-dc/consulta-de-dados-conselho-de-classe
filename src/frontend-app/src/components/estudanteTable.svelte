@@ -90,7 +90,7 @@
         <TableHeadCell class="w-32">Nome</TableHeadCell>
         <TableHeadCell class="w-16">Nome Social</TableHeadCell>
         <TableHeadCell class="w-16">Matrícula</TableHeadCell>
-        <TableHeadCell class="min-w-0">Suspenso</TableHeadCell>
+        <TableHeadCell class="min-w-0">Situação</TableHeadCell>
         <TableHeadCell class="w-32">Turma</TableHeadCell>
         <TableHeadCell class="w-24"></TableHeadCell> <!-- coluna para editar/remover -->
       </TableHead>
@@ -102,7 +102,6 @@
               {#if estudante.nomesocial}
                 {estudante.nomesocial}
               {:else}
-                Não possui
               {/if}
               </TableBodyCell>
             <TableBodyCell>{estudante.matricula}</TableBodyCell>
@@ -110,7 +109,7 @@
               {#if estudante.suspenso === 1}
                 Suspenso
               {:else}
-                Livre
+                
               {/if}
             </TableBodyCell>
             <TableBodyCell>{estudante.turma_id}</TableBodyCell>
