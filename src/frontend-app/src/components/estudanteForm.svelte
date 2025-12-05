@@ -116,7 +116,7 @@
       <!-- Campo turno -->
       <div>
         <Label for="nomeSocial">Nome Social</Label>
-        <Input id="nomeSocial" bind:value={estudante.nomeSocial} placeholder="Escreva o nomeSocial" required class="mt-1" />
+        <Input id="nomeSocial" bind:value={estudante.nomeSocial} placeholder="Escreva o nomeSocial"  class="mt-1" />
       </div>
       <!-- Campo serie -->
       <div>
