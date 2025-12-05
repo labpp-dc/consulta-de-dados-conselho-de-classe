@@ -14,7 +14,8 @@
     matricula:string;
     suspenso:number;
     foto:string | ArrayBuffer;
-    turma_id:number;
+    turma:string;
+    serie:number;
   };
 
   let estudante: Estudante[] = []; // lista de usuários
@@ -112,7 +113,7 @@
                 
               {/if}
             </TableBodyCell>
-            <TableBodyCell>{estudante.turma_id}</TableBodyCell>
+            <TableBodyCell>{estudante.turma}</TableBodyCell>
             <TableBodyCell>
               <!-- Botão editar -->
               <button
