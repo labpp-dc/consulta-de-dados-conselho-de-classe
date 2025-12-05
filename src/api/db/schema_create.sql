@@ -1,4 +1,4 @@
--- Active: 1762377016545@@127.0.0.1@5432@frequencia@public
+-- Active: 1764943796860@@127.0.0.1@5432@frequencia@public
 DROP TABLE IF EXISTS Cursos;
 DROP TABLE IF EXISTS AnoLetivo;
 DROP TABLE IF EXISTS Turmas;

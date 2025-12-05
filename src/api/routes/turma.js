@@ -8,7 +8,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todas as turmas */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT * FROM Turmas ORDER BY id');
+    const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno, AnoLetivo.Ano, Cursos.Nome AS Curso FROM Turmas JOIN AnoLetivo ON AnoLetivo.id = Turmas.anoLetivo_id JOIN Cursos ON Cursos.id = Turmas.curso_id ORDER BY Turmas.id;');
     res.json({
       success: true,
       data: result.rows

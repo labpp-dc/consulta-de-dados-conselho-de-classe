@@ -114,9 +114,9 @@
     <div>
       <Label for="serie">Serie</Label>
       <select name="serie" id="serie" bind:value={turma.serie}>
-        <option value=0> 1 ano</option>
-        <option value=1> 2 ano</option>
-        <option value=2> 3 ano</option>
+        <option value=1> 1 ano</option>
+        <option value=2> 2 ano</option>
+        <option value=3> 3 ano</option>
 
       </select>
     </div>

@@ -6,7 +6,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todos os estudantes */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT * FROM estudante ORDER BY id');
+    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.suspenso, estudante.matricula, estudante.foto,  Turmas.Nome AS Turma, Turmas.serie AS serie FROM estudante JOIN Turmas ON Turmas.id = estudante.turma_id ORDER BY estudante.id');
     res.json({
       success: true,
       data: result.rows

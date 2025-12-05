@@ -13,7 +13,7 @@
     turno: string;
     serie: number;
     curso: string;
-    anoLetivo: string;
+    ano: string;
   };
 
   let turmas: Turma[] = []; // lista de usuários
@@ -101,7 +101,7 @@
             <TableBodyCell class="truncate max-w-0">{turma.turno}</TableBodyCell>
             <TableBodyCell>{turma.serie}</TableBodyCell>
             <TableBodyCell>{turma.curso}</TableBodyCell>
-            <TableBodyCell>{turma.anoLetivo}</TableBodyCell>
+            <TableBodyCell>{turma.ano}</TableBodyCell>
             <TableBodyCell>
               <!-- Botão editar -->
               <button
@@ -136,7 +136,7 @@
             <div>
               <div class="text-lg font-semibold text-gray-800 text-left">{turma.nome}</div>
               <div class="text-lg font-semibold text-gray-800 text-left">{turma.curso}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{turma.anoLetivo}</div>
+              <div class="text-lg font-semibold text-gray-800 text-left">{turma.ano}</div>
               <div class="text-xs text-gray-400 text-left">ID: {turma.id}</div>
             </div>
             <div class="flex gap-2">
