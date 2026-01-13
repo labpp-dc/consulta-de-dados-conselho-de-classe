@@ -1,8 +1,11 @@
 -- Active: 1764943796860@@127.0.0.1@5432@frequencia@public
+-- Ajustar a ordem!!!!
 DROP TABLE IF EXISTS Cursos;
 DROP TABLE IF EXISTS AnoLetivo;
 DROP TABLE IF EXISTS Turmas;
 DROP TABLE IF EXISTS Materia;
+DROP TABLE IF EXISTS TurmaMateria;
+DROP TABLE IF EXISTS Notas;
 DROP TABLE IF EXISTS estudante;
 DROP TABLE IF EXISTS TurmaEstudante;
 DROP TABLE IF EXISTS Relatorio;
@@ -45,24 +48,7 @@ CREATE TABLE Turmas (
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular
     -- CONSTRAINT ck_usuario_senha_length CHECK (length(senha) >= 6), -- comprimento mínimo
     -- CONSTRAINT ck_usuario_role_valid CHECK (role IN ( 'user')) -- tipos de usuário
-CREATE TABLE Materia(
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    nome TEXT NOT NULL,
-    
-    CONSTRAINT pk_materia PRIMARY KEY (id),
-    turma_id INTEGER NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
-);
 
-CREATE TABLE TurmaMateria (
-    id bigint GENERATED ALWAYS AS IDENTITY,
-
-    CONSTRAINT pk_turmaMateria PRIMARY KEY (id),
-    turma_id INTEGER NOT NULL,
-    materia_id INTEGER NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id),
-    FOREIGN KEY (materia_id) REFERENCES Materia(id)
-);
 
 CREATE TABLE estudante (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -90,6 +76,37 @@ CREATE TABLE TurmaEstudante (
     FOREIGN KEY (estudante_id) REFERENCES estudante(id)
 
 );
+
+CREATE TABLE Materia(
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    nome TEXT NOT NULL,
+    
+    CONSTRAINT pk_materia PRIMARY KEY (id),
+    turma_id INTEGER NOT NULL,
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
+);
+
+CREATE TABLE TurmaMateria (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+
+    CONSTRAINT pk_turmaMateria PRIMARY KEY (id),
+    turma_id INTEGER NOT NULL,
+    materia_id INTEGER NOT NULL,
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id),
+    FOREIGN KEY (materia_id) REFERENCES Materia(id)
+);
+
+CREATE TABLE Notas (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    notas TEXT,
+
+    CONSTRAINT pk_notas PRIMARY KEY (id),
+    estudante_id INTEGER NOT NULL,
+    materia_id INTEGER NOT NULL,
+    FOREIGN KEY (estudante_id) REFERENCES estudante(id),
+    FOREIGN KEY (materia_id) REFERENCES Materia(id)
+);
+
 
 CREATE TABLE Relatorio(
     id bigint GENERATED ALWAYS AS IDENTITY,
