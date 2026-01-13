@@ -2,14 +2,10 @@
 DROP TABLE IF EXISTS Cursos;
 DROP TABLE IF EXISTS AnoLetivo;
 DROP TABLE IF EXISTS Turmas;
+DROP TABLE IF EXISTS Materia;
 DROP TABLE IF EXISTS estudante;
 DROP TABLE IF EXISTS TurmaEstudante;
-DROP TABLE IF EXISTS email;
-DROP TABLE IF EXISTS Entrada;
-DROP TABLE IF EXISTS Saida;
-DROP TABLE IF EXISTS Ocorrencias;
-DROP TABLE IF EXISTS Visitante;
-DROP TABLE IF EXISTS Ocorrencias;
+DROP TABLE IF EXISTS Relatorio;
 DROP TABLE IF EXISTS Funcionario;
 
 
@@ -49,7 +45,24 @@ CREATE TABLE Turmas (
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular
     -- CONSTRAINT ck_usuario_senha_length CHECK (length(senha) >= 6), -- comprimento mínimo
     -- CONSTRAINT ck_usuario_role_valid CHECK (role IN ( 'user')) -- tipos de usuário
+CREATE TABLE Materia(
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    nome TEXT NOT NULL,
+    
+    CONSTRAINT pk_materia PRIMARY KEY (id),
+    turma_id INTEGER NOT NULL,
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
+);
 
+CREATE TABLE TurmaMateria (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+
+    CONSTRAINT pk_turmaMateria PRIMARY KEY (id),
+    turma_id INTEGER NOT NULL,
+    materia_id INTEGER NOT NULL,
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id),
+    FOREIGN KEY (materia_id) REFERENCES Materia(id)
+);
 
 CREATE TABLE estudante (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -78,61 +91,15 @@ CREATE TABLE TurmaEstudante (
 
 );
 
-
-CREATE TABLE email(
+CREATE TABLE Relatorio(
     id bigint GENERATED ALWAYS AS IDENTITY,
-    endereco TEXT NOT NULL,
-    
-    CONSTRAINT pk_email PRIMARY KEY (id),
-    estudante_id INTEGER NOT NULL,
-    FOREIGN KEY (estudante_id) REFERENCES estudante(id)
-
-
-);
-
-
-CREATE TABLE Entrada(
-    id bigint GENERATED ALWAYS AS IDENTITY,
+    relato TEXT,
     data TIMESTAMP NOT NULL,
-    almoco INTEGER,
 
-    CONSTRAINT pk_Entrada PRIMARY KEY (id),
+    CONSTRAINT pk_relatorio PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     FOREIGN KEY(estudante_id) REFERENCES estudante(id)
 );
-
-CREATE TABLE Saida(
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    data TIMESTAMP NOT NULL,
-
-    CONSTRAINT pk_saida PRIMARY KEY (id),
-    estudante_id INTEGER NOT NULL,
-    FOREIGN KEY(estudante_id) REFERENCES estudante(id)
-);
-CREATE TABLE Ocorrencias(
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    uniforme TEXT,
-    atraso TEXT,
-    comportamento TEXT,
-    data TIMESTAMP NOT NULL,
-
-    CONSTRAINT pk_ocorrencias PRIMARY KEY (id),
-    estudante_id INTEGER NOT NULL,
-    FOREIGN KEY(estudante_id) REFERENCES estudante(id)
-);
-CREATE TABLE Visitante(
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    nome TEXT NOT NULL,
-    nomeSocial TEXT,
-    tipodeCadastrante TEXT NOT NULL,
-    CPF TEXT NOT NULL,
-    foto TEXT, 
-
-    CONSTRAINT pk_visitante PRIMARY KEY (id)
-
-);
-
-
 
 CREATE TABLE Funcionario(
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -140,7 +107,10 @@ CREATE TABLE Funcionario(
     senha TEXT NOT NULL,
     role TEXT NOT NULL,
 
-    CONSTRAINT pk_funcionario PRIMARY KEY (id)
+    CONSTRAINT pk_funcionario PRIMARY KEY (id),
+    CONSTRAINT ck_funcionario_role_valid CHECK (role IN ('admin', 'professor')),
+    materia_id INTEGER,
+    FOREIGN KEY(materia_id) REFERENCES Materia(id)
 );
     INSERT INTO Funcionario (login, senha, role) VALUES ('admin', '$2b$10$ypakIosLzNJNf3BvwAiys.Hthfykp7Zp/YealuGcgPfQhO85FNUPO', 'admin');
     --372586801668
