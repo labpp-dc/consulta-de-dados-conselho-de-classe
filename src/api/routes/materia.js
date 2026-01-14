@@ -3,7 +3,7 @@ var router = express.Router();
 const pool = require('../db/config');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
-/* GET - Buscar todos os estudantes */
+/* GET - Buscar todas as matérias */
 router.get('/', verifyToken, async function(req, res) {
   try {
     const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.suspenso, estudante.matricula, estudante.foto,  Turmas.Nome AS Turma, Turmas.serie AS serie FROM estudante JOIN Turmas ON Turmas.id = estudante.turma_id ORDER BY estudante.id');
@@ -12,7 +12,7 @@ router.get('/', verifyToken, async function(req, res) {
       data: result.rows
     });
   } catch (error) {
-    console.error('Erro ao buscar os estudantes:', error);
+    console.error('Erro ao buscar as matérias:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
@@ -22,17 +22,17 @@ router.get('/', verifyToken, async function(req, res) {
 });
 
 
-/* GET parametrizado - Buscar usuário por ID */
+/* GET parametrizado - Buscar matéria por ID */
 router.get('/:id', verifyToken, async function(req, res) {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM estudante WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM Materia WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Estudante não encontrado'
+        message: 'Matéria não encontrada'
       });
     }
     
@@ -41,7 +41,7 @@ router.get('/:id', verifyToken, async function(req, res) {
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao buscar usuário:', error);
+    console.error('Erro ao buscar matéria:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
@@ -50,43 +50,34 @@ router.get('/:id', verifyToken, async function(req, res) {
   }
 });
 
-/* POST - Criar novo estudante */
+/* POST - Criar nova matéria */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { nome, nomeSocial, matricula, suspenso, foto, turma_id } = req.body;
+    const { nome, turma_id } = req.body;
     
     // Validação básica
-    if (!nome  || !matricula  || !foto  || !turma_id) {
+    if (!nome  || !turma_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, matrícula, série e foto são obrigatórios'
-      });
-    }
-    
-    // Verificar se a matricula já existe
-    const existingUser = await pool.query('SELECT id FROM estudante WHERE matricula = $1', [matricula]);
-    if (existingUser.rows.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Matrícula já está em uso'
+        message: 'Nome e turma são obrigatórios'
       });
     }
 
     // Insert
     const result = await pool.query(
-      'INSERT INTO estudante (nome, nomeSocial, matricula, suspenso, foto, turma_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, nome, nomeSocial, matricula, suspenso, foto, turma_id',
-      [nome, nomeSocial, matricula, suspenso, foto, turma_id]
+      'INSERT INTO Materia (nome, turma_id) VALUES ($1, $2) RETURNING id, nome, turma_id',
+      [nome, turma_id]
     );
 
     // http status 201 - Created
     res.status(201).json({
       success: true,
-      message: 'Estudante cadastrado com sucesso',
+      message: 'Matéria cadastrada com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao cadastrar estudante:', error);
+    console.error('Erro ao cadastrar matéria:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -102,53 +93,43 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
   }
 });
 
-/* PUT - Atualizar usuário */
+/* PUT - Atualizar Matéria */
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { nome, nomeSocial, matricula, suspenso, foto, turma_id } = req.body;
+    const { nome, turma_id } = req.body;
     
     // Validação básica
-    if (!nome  || !matricula  || !foto  || !turma_id) {
+    if (!nome  || !turma_id) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome, matrícula e foto são obrigatórios'
+        message: 'Nome e turma são obrigatórios'
       });
     }
     
     // Verificar se o usuário existe
-    const userExists = await pool.query('SELECT id FROM estudante WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Materia WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Estudante não encontrado'
-      });
-    }
-    
-    // Verificar se a matrícula já está em uso por outro usuário
-    const existingUser = await pool.query('SELECT id FROM estudante WHERE matricula = $1 AND id != $2', [matricula, id]);
-    if (existingUser.rows.length > 0) {
-      // https status 409 - Conflict
-      return res.status(409).json({
-        success: false,
-        message: 'Matrícula já está em uso por outro usuário'
+        message: 'Matéria não encontrada'
       });
     }
     
     let query, params;    
-    query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, suspenso = $4, foto = $5, turma_id = $6 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma_id';
-    params = [ nome, nomeSocial, matricula, suspenso, foto, turma_id, id];    
+    query = 'UPDATE Materia SET nome = $1, turma_id = $2 WHERE id = $3 RETURNING id, nome, turma_id';
+    params = [nome, turma_id, id];    
     const result = await pool.query(query, params);
     
     res.json({
       success: true,
-      message: 'Estudante atualizado com sucesso',
+      message: 'Matéria atualizado com sucesso',
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao atualizar estudante:', error);
+    console.error('Erro ao atualizar matéria:', error);
     // Verificar se é erro de constraint
     if (error.code === '23514') {
       return res.status(400).json({
@@ -164,29 +145,29 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   }
 });
 
-/* DELETE - Remover estudante */
+/* DELETE - Remover Materia */
 router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
     
     // Verificar se o usuário existe
-    const userExists = await pool.query('SELECT id FROM estudante WHERE id = $1', [id]);
+    const userExists = await pool.query('SELECT id FROM Materia WHERE id = $1', [id]);
     if (userExists.rows.length === 0) {
       // http status 404 - Not Found
       return res.status(404).json({
         success: false,
-        message: 'Estudante não encontrado'
+        message: 'Materia não encontrada'
       });
     }
     
-    await pool.query('DELETE FROM estudante WHERE id = $1', [id]);
+    await pool.query('DELETE FROM Materia WHERE id = $1', [id]);
     
     res.json({
       success: true,
-      message: 'Estudante deletado com sucesso'
+      message: 'Materia deletada com sucesso'
     });
   } catch (error) {
-    console.error('Erro ao deletar estudante:', error);
+    console.error('Erro ao deletar materia:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
