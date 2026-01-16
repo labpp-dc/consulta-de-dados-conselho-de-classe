@@ -1,5 +1,4 @@
--- Active: 1764943796860@@127.0.0.1@5432@frequencia@public
--- Ajustar a ordem!!!!
+-- Active: 1764943796860@@127.0.0.1@5432@cdcc@public
 DROP TABLE IF EXISTS Funcionario;
 DROP TABLE IF EXISTS Relatorio;
 DROP TABLE IF EXISTS Notas;
