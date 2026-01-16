@@ -22,6 +22,34 @@ router.get('/', verifyToken, async function(req, res) {
   }
 });
 
+/* GET parametrizado - Buscar estudantes por turma */
+router.get('/:estudantes', verifyToken, async function(req, res) {
+  try {
+    const { nome, anoLetivo } = req.params;
+    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma, AnoLetivo.ano AS ano FROM estudante JOIN Turmas ON Turmas.id = estudante.turma_id JOIN AnoLetivo ON AnoLetivo.id = Turmas.anoLetivo_id WHERE AnoLetivo.ano = $1 AND Turmas.nome = $2 RETURNING * ORDER BY estudante.id;', [nome, anoLetivo]);
+
+    if (result.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Turma não encontrada'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Erro ao buscar estudantes:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
 /* POST - Criar nova turma */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {

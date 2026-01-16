@@ -110,7 +110,7 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     
     //Insert
     const result = await pool.query(
-      'INSERT INTO Funcionario (login, senha, role) VALUES ($1, $2, $3, $4) RETURNING id, login, role',
+      'INSERT INTO Funcionario (login, senha, role) VALUES ($1, $2, $3) RETURNING id, login, role',
       [login, hashedPassword, role]
     );
 

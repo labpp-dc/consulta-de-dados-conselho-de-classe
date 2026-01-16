@@ -1,15 +1,15 @@
 -- Active: 1764943796860@@127.0.0.1@5432@frequencia@public
 -- Ajustar a ordem!!!!
+DROP TABLE IF EXISTS Funcionario;
+DROP TABLE IF EXISTS Relatorio;
+DROP TABLE IF EXISTS Notas;
+DROP TABLE IF EXISTS TurmaMateria;
+DROP TABLE IF EXISTS Materia;
+DROP TABLE IF EXISTS TurmaEstudante;
+DROP TABLE IF EXISTS estudante;
+DROP TABLE IF EXISTS Turmas;
 DROP TABLE IF EXISTS Cursos;
 DROP TABLE IF EXISTS AnoLetivo;
-DROP TABLE IF EXISTS Turmas;
-DROP TABLE IF EXISTS Materia;
-DROP TABLE IF EXISTS TurmaMateria;
-DROP TABLE IF EXISTS Notas;
-DROP TABLE IF EXISTS estudante;
-DROP TABLE IF EXISTS TurmaEstudante;
-DROP TABLE IF EXISTS Relatorio;
-DROP TABLE IF EXISTS Funcionario;
 
 
 CREATE TABLE Cursos (
@@ -22,7 +22,7 @@ INSERT INTO Cursos (Nome) VALUES ('DS');
 
 CREATE TABLE AnoLetivo (
     id bigint GENERATED ALWAYS AS IDENTITY,
-    Ano TEXT NOT NULL,
+    ano TEXT NOT NULL,
     
     CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
 );
@@ -125,7 +125,6 @@ CREATE TABLE Funcionario(
     role TEXT NOT NULL,
 
     CONSTRAINT pk_funcionario PRIMARY KEY (id),
-    CONSTRAINT ck_funcionario_role_valid CHECK (role IN ('admin', 'professor')),
     materia_id INTEGER,
     FOREIGN KEY(materia_id) REFERENCES Materia(id)
 );
