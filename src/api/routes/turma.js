@@ -54,7 +54,7 @@ router.get('/:estudantes', verifyToken, async function(req, res) {
 router.get('/:materias', verifyToken, async function(req, res) {
   try {
     const { nome } = req.params;
-    const result = await pool.query('SELECT materia.id, materia.nome, Turmas.nome AS turma, JOIN Turmas ON Turmas.id = materia.turma_id WHERE AND Turmas.nome = $1 RETURNING * ORDER BY materia.id;', [nome]);
+    const result = await pool.query('SELECT materia.id, materia.nome, Turmas.nome AS turma, JOIN Turmas ON Turmas.id = materia.turma_id WHERE Turmas.nome = $1 RETURNING * ORDER BY materia.id;', [nome]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found

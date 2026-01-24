@@ -50,6 +50,36 @@ router.get('/:id', verifyToken, async function(req, res) {
   }
 });
 
+
+/* GET parametrizado - Buscar notas do estudante em todas as matérias  */
+router.get('/:notas', verifyToken, async function(req, res) {
+  try {
+    const { nome } = req.params;
+    const result = await pool.query('SELECT notas.id, notas.notas, notas.semestre, Estudante.nome AS estudante, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id WHERE Estudante.nome = $1 ORDER BY notas.id;', [nome]);
+
+    if (result.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Notas do estudante não encontradas'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Erro ao buscar as notas do estudante:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+
 /* POST - Criar novo estudante */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {

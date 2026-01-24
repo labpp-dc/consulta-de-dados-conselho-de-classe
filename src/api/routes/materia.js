@@ -50,6 +50,7 @@ router.get('/:id', verifyToken, async function(req, res) {
   }
 });
 
+
 /* POST - Criar nova matéria */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {

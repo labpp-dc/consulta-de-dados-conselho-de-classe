@@ -88,6 +88,7 @@ CREATE TABLE TurmaMateria (
 CREATE TABLE Notas (
     id bigint GENERATED ALWAYS AS IDENTITY,
     notas TEXT,
+    semestre TEXT,
 
     CONSTRAINT pk_notas PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
