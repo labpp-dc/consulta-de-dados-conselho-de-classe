@@ -29,7 +29,7 @@ CREATE TABLE Turmas (
     
     CONSTRAINT pk_turma PRIMARY KEY (id),
     curso_id INTEGER NOT NULL,
-    FOREIGN KEY (curso_id) REFERENCES Cursos(id),
+    FOREIGN KEY (curso_id) REFERENCES Cursos(id)
     -- CONSTRAINT ck_turma_serie CHECK a fazer
     -- Fazer um constraint para nome de turma
     -- Criar atributo número para turma
