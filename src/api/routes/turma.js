@@ -79,6 +79,52 @@ router.get('/:materias', verifyToken, async function(req, res) {
 });
 
 
+/* GET parametrizado - Buscar notas dos estudante de uma turma em todas as matérias  */
+router.get('/:notas', verifyToken, async function(req, res) {
+
+  try {
+    const { turma, filtro, materiaEscolhida } = req.params;
+    
+    // If para decidir se o get buscará uma matéria especifica ou todas, a variavél filtro é só um boolean.
+    
+    if (filtro){ 
+
+      //Busca de notas de uma matéria espécifica
+
+       const result = await pool.query('SELECT notas.id, notas.notas, notas.semestre, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 AND materia = $2   ORDER BY estudante.id;', [turma, materiaEscolhida]);
+    }
+
+    else{
+
+      //Busca de notas de todas as matérias
+
+       const result = await pool.query('SELECT notas.id, notas.notas, notas.semestre, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 ORDER BY estudante.id;', [turma]);
+
+    }
+    
+    if (result.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Notas do estudante não encontradas'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Erro ao buscar as notas dos estudantes:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+
 /* POST - Criar nova turma */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
