@@ -7,10 +7,6 @@
   import { ArrowLeftOutline, FloppyDiskAltOutline } from 'flowbite-svelte-icons'; // ícones
 
   export let id: number | null = null; // id da turma
-  type Ano = {
-    id: number;
-    ano: string;
-  };
   type Curso = {
     id: number;
     nome: string;
@@ -21,11 +17,9 @@
     turno: string;
     serie: number;
     curso_id: string;
-    anoLetivo_id: string;
   };
-  let anoLetivos: Ano[] =[];
   let cursos: Curso[] =[];
-  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso_id: '', anoLetivo_id: ''}; // dados do form
+  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso_id: ''}; // dados do form
   let loading = false;
   let error = '';
 
@@ -38,14 +32,7 @@
         console.log(cursos);
       } catch (e) {
         error = 'Erro ao carregar cursos.';
-      } 
-      try {
-        const res = await api.get(`/anoLetivo`);
-        anoLetivos = res.data.data;
-        console.log(anoLetivos);
-      } catch (e) {
-        error = 'Erro ao carregar anos letivos.';
-      } 
+      }  
     if (id !== null) {
       loading = true;
      
@@ -127,17 +114,6 @@
       <select name="curso" id="curso" bind:value={turma.curso_id}>
         {#each cursos as curso}
           <option value={curso.id}>{curso.nome}</option>
-        {/each}
-      </select>
-    </div>
-
-    <!-- Campo ano letivo -->
-
-    <div>
-      <Label for="anoLetivo">Ano Letivo</Label>
-      <select name="anoLetivo" id="anoLetivo" bind:value={turma.anoLetivo_id}>
-        {#each anoLetivos as anoLetivo}
-          <option value={anoLetivo.id}>{anoLetivo.ano}</option>
         {/each}
       </select>
     </div>

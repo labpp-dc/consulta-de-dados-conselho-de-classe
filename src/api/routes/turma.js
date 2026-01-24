@@ -8,7 +8,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todas as turmas */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno, AnoLetivo.Ano, Cursos.Nome AS Curso FROM Turmas JOIN AnoLetivo ON AnoLetivo.id = Turmas.anoLetivo_id JOIN Cursos ON Cursos.id = Turmas.curso_id ORDER BY Turmas.id;');
+    const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno, Cursos.Nome AS Curso FROM Turmas JOIN Cursos ON Cursos.id = Turmas.curso_id ORDER BY Turmas.id;');
     res.json({
       success: true,
       data: result.rows
@@ -25,7 +25,7 @@ router.get('/', verifyToken, async function(req, res) {
 /* GET parametrizado - Buscar estudantes por turma */
 router.get('/:estudantes', verifyToken, async function(req, res) {
   try {
-    const { nome, anoLetivo } = req.params;
+    const { nome} = req.params;
     const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma JOIN Turmas ON Turmas.id = estudante.turma_id WHERE  Turmas.nome = $1 RETURNING * ORDER BY estudante.id;', [nome]);
 
     if (result.rows.length === 0) {
@@ -134,7 +134,7 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     if (!nome || !turno || !serie || !curso_id) {
       return res.status(400).json({
         success: false,
-        message: 'Nome, turno, serie, curso e anoLetivo são obrigatórios'
+        message: 'Nome, turno, serie e curso são obrigatórios'
       });
     }
     

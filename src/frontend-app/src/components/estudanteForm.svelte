@@ -16,7 +16,6 @@
     turno: string;
     serie: number;
     curso_id: string;
-    anoLetivo_id: string;
     };
     type Estudante = {
         id: number;
