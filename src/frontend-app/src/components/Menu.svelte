@@ -94,9 +94,7 @@
         <li class="w-full md:w-auto text-center">
           <a href="/turmas" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Turmas</a>
         </li>
-        <li class="w-full md:w-auto text-center">
-          <a href="/aviso" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Avisos</a>
-        </li>
+        
 
         <li class="w-full md:w-auto py-2 md:py-0">
           <a href="/estudante" class="flex items-center justify-center gap-2 py-2 px-4 text-[#003366] bg-yellow-400 hover:bg-yellow-300 rounded-full font-bold transition-all transform hover:scale-105 shadow-md">
