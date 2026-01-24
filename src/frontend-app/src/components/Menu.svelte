@@ -53,7 +53,7 @@
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
     
     <a href="/" class="flex items-center space-x-3 group">
-      <div class="bg-white p-1 rounded-full shadow-md group-hover:scale-105 transition-transform">
+      <div class="bg-white p-1 rounded-full shadow-md group-hover:scale-105 transition-transform hidden sm:inline">
         <img src="../images/CP2TudoouNada.png" class="h-10 w-10 object-contain" alt="Logo CP2" />
       </div>
       <div class="flex flex-col">
