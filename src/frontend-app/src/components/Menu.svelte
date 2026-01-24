@@ -89,7 +89,7 @@
           <a href="/" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Início</a>
         </li>
         <li class="w-full md:w-auto text-center">
-          <a href="/freq" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Sobre</a>
+          <a href="/sobre" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Sobre</a>
         </li>
         <li class="w-full md:w-auto text-center">
           <a href="/turmas" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Turmas</a>
