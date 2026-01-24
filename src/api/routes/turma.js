@@ -26,7 +26,7 @@ router.get('/', verifyToken, async function(req, res) {
 router.get('/:estudantes', verifyToken, async function(req, res) {
   try {
     const { nome, anoLetivo } = req.params;
-    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma, AnoLetivo.ano AS ano FROM estudante JOIN Turmas ON Turmas.id = estudante.turma_id JOIN AnoLetivo ON AnoLetivo.id = Turmas.anoLetivo_id WHERE AnoLetivo.ano = $1 AND Turmas.nome = $2 RETURNING * ORDER BY estudante.id;', [nome, anoLetivo]);
+    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma JOIN Turmas ON Turmas.id = estudante.turma_id WHERE  Turmas.nome = $1 RETURNING * ORDER BY estudante.id;', [nome]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -50,13 +50,42 @@ router.get('/:estudantes', verifyToken, async function(req, res) {
   }
 });
 
+/* GET parametrizado - Buscar matérias por turma */
+router.get('/:materias', verifyToken, async function(req, res) {
+  try {
+    const { nome } = req.params;
+    const result = await pool.query('SELECT materia.id, materia.nome, Turmas.nome AS turma, JOIN Turmas ON Turmas.id = materia.turma_id WHERE AND Turmas.nome = $1 RETURNING * ORDER BY materia.id;', [nome]);
+
+    if (result.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Matérias da Turma não encontrada'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Erro ao buscar estudantes:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+
 /* POST - Criar nova turma */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { nome, turno, serie, curso_id, anoLetivo_id } = req.body;
+    const { nome, turno, serie, curso_id } = req.body;
     
     // Validação básica - FIXED
-    if (!nome || !turno || !serie || !curso_id || !anoLetivo_id) {
+    if (!nome || !turno || !serie || !curso_id) {
       return res.status(400).json({
         success: false,
         message: 'Nome, turno, serie, curso e anoLetivo são obrigatórios'
@@ -72,22 +101,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
       });
     }
     
-    // Verificar se o nome já existe naquele anoLetivo - FIXED
-    const existingTurma = await pool.query(
-      'SELECT id FROM Turmas WHERE nome = $1 AND anoLetivo_id = $2', 
-      [nome, anoLetivo_id]
-    );
-    if (existingTurma.rows.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Nome de turma já está em uso em outra turma deste ano'
-      });
-    }
-    
     // Insert
     const result = await pool.query(
-      'INSERT INTO Turmas (nome, turno, serie, curso_id, anoLetivo_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, nome, turno, serie, curso_id, anoLetivo_id',
-      [nome, turno, serie, curso_id, anoLetivo_id]
+      'INSERT INTO Turmas (nome, turno, serie, curso_id) VALUES ($1, $2, $3, $4) RETURNING id, nome, turno, serie, curso_id',
+      [nome, turno, serie, curso_id]
     );
 
     res.status(201).json({
@@ -114,13 +131,13 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { nome, turno, serie, curso_id, anoLetivo_id } = req.body;
+    const { nome, turno, serie, curso_id } = req.body;
     
     // Validação básica
-    if (!nome || !turno || !serie || !curso_id || !anoLetivo_id) {
+    if (!nome || !turno || !serie || !curso_id) {
       return res.status(400).json({
         success: false,
-        message: 'Nome, turno, serie, curso e ano letivo são obrigatórios'
+        message: 'Nome, turno, serie, curso são obrigatórios'
       });
     }
     
@@ -133,21 +150,9 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
       });
     }
     
-    // Verificar se o nome da turma já está em uso no mesmo ano - FIXED
-    const existingTurma = await pool.query(
-      'SELECT id FROM Turmas WHERE nome = $1 AND anoLetivo_id = $2 AND id != $3',
-      [nome, anoLetivo_id, id]
-    );
-    if (existingTurma.rows.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Nome de turma já está em uso por outra turma neste ano'
-      });
-    }
-    
     // Update query - FIXED
-    const query = 'UPDATE Turmas SET nome = $1, turno = $2, serie = $3, curso_id = $4, anoLetivo_id = $5 WHERE id = $6 RETURNING id, nome, turno, serie, curso_id, anoLetivo_id';
-    const params = [nome, turno, serie, curso_id, anoLetivo_id, id];
+    const query = 'UPDATE Turmas SET nome = $1, turno = $2, serie = $3, curso_id = $4 WHERE id = $5 RETURNING id, nome, turno, serie, curso_id';
+    const params = [nome, turno, serie, curso_id, id];
     
     const result = await pool.query(query, params);
     

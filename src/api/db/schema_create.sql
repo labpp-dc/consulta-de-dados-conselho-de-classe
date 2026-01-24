@@ -1,4 +1,5 @@
--- Active: 1764943796860@@127.0.0.1@5432@cdcc@public
+-- Active: 1769282431427@@127.0.0.1@5432@cdcc
+
 DROP TABLE IF EXISTS Funcionario;
 DROP TABLE IF EXISTS Relatorio;
 DROP TABLE IF EXISTS Notas;
@@ -8,7 +9,6 @@ DROP TABLE IF EXISTS TurmaEstudante;
 DROP TABLE IF EXISTS estudante;
 DROP TABLE IF EXISTS Turmas;
 DROP TABLE IF EXISTS Cursos;
-DROP TABLE IF EXISTS AnoLetivo;
 
 
 CREATE TABLE Cursos (
@@ -18,14 +18,6 @@ CREATE TABLE Cursos (
     CONSTRAINT pk_curso PRIMARY KEY (id)
 );
 INSERT INTO Cursos (Nome) VALUES ('DS');
-
-CREATE TABLE AnoLetivo (
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    ano TEXT NOT NULL,
-    
-    CONSTRAINT pk_AnoLetivo PRIMARY KEY (id)
-);
-INSERT INTO AnoLetivo (Ano) VALUES ('2025');
 
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -38,8 +30,6 @@ CREATE TABLE Turmas (
     CONSTRAINT pk_turma PRIMARY KEY (id),
     curso_id INTEGER NOT NULL,
     FOREIGN KEY (curso_id) REFERENCES Cursos(id),
-    anoLetivo_id INTEGER NOT NULL,
-    FOREIGN KEY (anoLetivo_id) REFERENCES AnoLetivo(id)
     -- CONSTRAINT ck_turma_serie CHECK a fazer
     -- Fazer um constraint para nome de turma
     -- Criar atributo número para turma
@@ -123,9 +113,7 @@ CREATE TABLE Funcionario(
     senha TEXT NOT NULL,
     role TEXT NOT NULL,
 
-    CONSTRAINT pk_funcionario PRIMARY KEY (id),
-    materia_id INTEGER,
-    FOREIGN KEY(materia_id) REFERENCES Materia(id)
+    CONSTRAINT pk_funcionario PRIMARY KEY (id)
 );
     INSERT INTO Funcionario (login, senha, role) VALUES ('admin', '$2b$10$ypakIosLzNJNf3BvwAiys.Hthfykp7Zp/YealuGcgPfQhO85FNUPO', 'admin');
     --372586801668
