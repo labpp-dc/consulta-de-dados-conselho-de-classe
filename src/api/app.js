@@ -8,7 +8,6 @@ var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/funcionario');
-var cursoRouter = require('./routes/curso');
 var materiaRouter = require('./routes/materia');
 var estudanteRouter = require('./routes/estudante');
 var relatorioRouter = require('./routes/relatorio');
@@ -31,7 +30,6 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/curso', cursoRouter);
 app.use('/materia', materiaRouter);
 app.use('/estudante', estudanteRouter);
 app.use('/relatorio', relatorioRouter);

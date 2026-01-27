@@ -8,7 +8,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todas as turmas */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno, Cursos.Nome AS Curso FROM Turmas JOIN Cursos ON Cursos.id = Turmas.curso_id ORDER BY Turmas.id;');
+    const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno FROM Turmas ORDER BY Turmas.id;');
     res.json({
       success: true,
       data: result.rows
@@ -91,14 +91,14 @@ router.get('/:notas', verifyToken, async function(req, res) {
 
       //Busca de notas de uma matéria espécifica
 
-       const result = await pool.query('SELECT notas.id, notas.notas, notas.semestre, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 AND materia = $2   ORDER BY estudante.id;', [turma, materiaEscolhida]);
+       const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 AND materia = $2 ORDER BY estudante.id;', [turma, materiaEscolhida]);
     }
 
     else{
 
       //Busca de notas de todas as matérias
 
-       const result = await pool.query('SELECT notas.id, notas.notas, notas.semestre, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 ORDER BY estudante.id;', [turma]);
+       const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 ORDER BY estudante.id;', [turma]);
 
     }
     
@@ -128,29 +128,20 @@ router.get('/:notas', verifyToken, async function(req, res) {
 /* POST - Criar nova turma */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { nome, turno, serie, curso_id } = req.body;
+    const { nome, turno, serie } = req.body;
     
     // Validação básica - FIXED
-    if (!nome || !turno || !serie || !curso_id) {
+    if (!nome || !turno || !serie) {
       return res.status(400).json({
         success: false,
-        message: 'Nome, turno, serie e curso são obrigatórios'
-      });
-    }
-    
-    // Verificar se o curso indicado existe - FIXED
-    const existingCurso = await pool.query('SELECT id FROM Cursos WHERE id = $1', [curso_id]);
-    if (existingCurso.rows.length === 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Curso escolhido não existente'
+        message: 'Nome, turno e série são obrigatórios'
       });
     }
     
     // Insert
     const result = await pool.query(
-      'INSERT INTO Turmas (nome, turno, serie, curso_id) VALUES ($1, $2, $3, $4) RETURNING id, nome, turno, serie, curso_id',
-      [nome, turno, serie, curso_id]
+      'INSERT INTO Turmas (nome, turno, serie) VALUES ($1, $2, $3) RETURNING id, nome, turno, serie;',
+      [nome, turno, serie]
     );
 
     res.status(201).json({
@@ -177,13 +168,13 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { nome, turno, serie, curso_id } = req.body;
+    const { nome, turno, serie} = req.body;
     
     // Validação básica
-    if (!nome || !turno || !serie || !curso_id) {
+    if (!nome || !turno || !serie) {
       return res.status(400).json({
         success: false,
-        message: 'Nome, turno, serie, curso são obrigatórios'
+        message: 'Nome, turno e série são obrigatórios'
       });
     }
     
@@ -197,8 +188,8 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     // Update query - FIXED
-    const query = 'UPDATE Turmas SET nome = $1, turno = $2, serie = $3, curso_id = $4 WHERE id = $5 RETURNING id, nome, turno, serie, curso_id';
-    const params = [nome, turno, serie, curso_id, id];
+    const query = 'UPDATE Turmas SET nome = $1, turno = $2, serie = $3 WHERE id = $4 RETURNING id, nome, turno, serie;';
+    const params = [nome, turno, serie, id];
     
     const result = await pool.query(query, params);
     

@@ -55,7 +55,7 @@ router.get('/:id', verifyToken, async function(req, res) {
 router.get('/:notas', verifyToken, async function(req, res) {
   try {
     const { nome } = req.params;
-    const result = await pool.query('SELECT notas.id, notas.notas, notas.semestre, Estudante.nome AS estudante, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id WHERE Estudante.nome = $1 ORDER BY notas.id;', [nome]);
+    const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id WHERE Estudante.nome = $1 ORDER BY notas.id;', [nome]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found

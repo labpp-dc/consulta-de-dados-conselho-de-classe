@@ -8,16 +8,6 @@ DROP TABLE IF EXISTS Materia;
 DROP TABLE IF EXISTS TurmaEstudante;
 DROP TABLE IF EXISTS estudante;
 DROP TABLE IF EXISTS Turmas;
-DROP TABLE IF EXISTS Cursos;
-
-
-CREATE TABLE Cursos (
-    id bigint GENERATED ALWAYS AS IDENTITY,
-    Nome TEXT NOT NULL,
-
-    CONSTRAINT pk_curso PRIMARY KEY (id)
-);
-INSERT INTO Cursos (Nome) VALUES ('DS');
 
 CREATE TABLE Turmas (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -28,8 +18,6 @@ CREATE TABLE Turmas (
 
     
     CONSTRAINT pk_turma PRIMARY KEY (id),
-    curso_id INTEGER NOT NULL,
-    FOREIGN KEY (curso_id) REFERENCES Cursos(id)
     -- CONSTRAINT ck_turma_serie CHECK a fazer
     -- Fazer um constraint para nome de turma
     -- Criar atributo número para turma
@@ -87,12 +75,16 @@ CREATE TABLE TurmaMateria (
 
 CREATE TABLE Notas (
     id bigint GENERATED ALWAYS AS IDENTITY,
-    notas TEXT,
-    semestre TEXT,
+    cert1 FLOAT,
+    apoio1 FLOAT,
+    cert2 FLOAT,
+    apoio2 FLOAT,
+    pfv FLOAT,
 
     CONSTRAINT pk_notas PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     materia_id INTEGER NOT NULL,
+    CONSTRAINT UNIQUE (estudante_id, materia_id),
     FOREIGN KEY (estudante_id) REFERENCES estudante(id),
     FOREIGN KEY (materia_id) REFERENCES Materia(id)
 );
