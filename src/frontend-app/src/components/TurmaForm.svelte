@@ -1,38 +1,25 @@
 <script lang="ts">
   // Formulário de turmas
-  import { Card, Button, Label, Input, Heading, Select } from 'flowbite-svelte'; // UI
+  import { Card, Button, Label, Input, Heading } from 'flowbite-svelte'; // UI
   import { onMount } from 'svelte'; // ciclo de vida
   import api from '$lib/api'; // API backend
   import { goto } from '$app/navigation'; // navegação
   import { ArrowLeftOutline, FloppyDiskAltOutline } from 'flowbite-svelte-icons'; // ícones
 
   export let id: number | null = null; // id da turma
-  type Curso = {
-    id: number;
-    nome: string;
-  };
   type Turma = {
     id: number;
     nome: string;
     turno: string;
     serie: number;
-    curso_id: string;
   };
-  let cursos: Curso[] =[];
-  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0, curso_id: ''}; // dados do form
+  let turma: Turma = { id: 0, nome: '', turno: '', serie: 0}; // dados do form
   let loading = false;
   let error = '';
 
   
   // Carrega turma se for edição
-  onMount(async () => {
-    try {
-        const res = await api.get(`/curso`);
-        cursos = res.data.data;
-        console.log(cursos);
-      } catch (e) {
-        error = 'Erro ao carregar cursos.';
-      }  
+  onMount(async () => {  
     if (id !== null) {
       loading = true;
      
@@ -107,17 +94,7 @@
 
       </select>
     </div>
-    <!-- Campo curso -->
-
-    <div>
-      <Label for="curso">Curso</Label>
-      <select name="curso" id="curso" bind:value={turma.curso_id}>
-        {#each cursos as curso}
-          <option value={curso.id}>{curso.nome}</option>
-        {/each}
-      </select>
-    </div>
-
+    
     <!-- Botões de ação -->
     <div class="flex gap-4 justify-end mt-4">
       <!-- Botão cancelar/voltar -->

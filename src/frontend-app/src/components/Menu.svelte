@@ -95,11 +95,14 @@
           <a href="/turmas" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">Turmas</a>
         </li>
         
-
         <li class="w-full md:w-auto py-2 md:py-0">
-          <a href="/estudante" class="flex items-center justify-center gap-2 py-2 px-4 text-[#003366] bg-yellow-400 hover:bg-yellow-300 rounded-full font-bold transition-all transform hover:scale-105 shadow-md">
-            <UserCircleOutline class="w-5 h-5" />
+          <a href="/estudante" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">
             Estudante
+          </a>
+        </li>
+        <li class="w-full md:w-auto py-2 md:py-0">
+          <a href="/materia" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">
+            Matéria
           </a>
         </li>
 
@@ -115,7 +118,8 @@
           </li>
         {:else}
           <li class="w-full md:w-auto md:ml-4 border-t md:border-t-0 md:border-l border-blue-400 pt-2 md:pt-0 md:pl-6 text-center">
-            <a href="/login" class="text-white hover:text-yellow-400 font-semibold transition-colors">Entrar</a>
+            <a href="/login" class="flex items-center justify-center gap-2 py-2 px-4 text-[#003366] bg-yellow-400 hover:bg-yellow-300 rounded-full font-bold transition-all transform hover:scale-105 shadow-md"><UserCircleOutline class="w-5 h-5" />
+            Entrar</a>
           </li>
         {/if}
       </ul>

@@ -17,11 +17,12 @@ CREATE TABLE Turmas (
     serie INTEGER NOT NULL,
 
     
-    CONSTRAINT pk_turma PRIMARY KEY (id),
+    CONSTRAINT pk_turma PRIMARY KEY (id)
     -- CONSTRAINT ck_turma_serie CHECK a fazer
     -- Fazer um constraint para nome de turma
     -- Criar atributo número para turma
 );
+INSERT INTO Turmas (nome, turno, serie) VALUES ('DS302', 'Integral', 3);
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular
     -- CONSTRAINT ck_usuario_senha_length CHECK (length(senha) >= 6), -- comprimento mínimo
     -- CONSTRAINT ck_usuario_role_valid CHECK (role IN ( 'user')) -- tipos de usuário
@@ -62,6 +63,7 @@ CREATE TABLE Materia(
     turma_id INTEGER NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id)
 );
+INSERT INTO Materia (nome, turma_id) VALUES ('LP4', 1);
 
 CREATE TABLE TurmaMateria (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -84,7 +86,7 @@ CREATE TABLE Notas (
     CONSTRAINT pk_notas PRIMARY KEY (id),
     estudante_id INTEGER NOT NULL,
     materia_id INTEGER NOT NULL,
-    CONSTRAINT UNIQUE (estudante_id, materia_id),
+    UNIQUE (estudante_id, materia_id),
     FOREIGN KEY (estudante_id) REFERENCES estudante(id),
     FOREIGN KEY (materia_id) REFERENCES Materia(id)
 );
