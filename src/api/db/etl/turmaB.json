@@ -1,6 +1,6 @@
 {
     "turma": "TURMA_B",
-    "disciplinas": ["Matematica", "Portugues", "Historia", "Geografia", "Ciencias"],
-    "avaliacoes": ["1c", "1ca", "2c", "2ca", "pfv"]
+    "materia": ["Matematica", "Portugues", "Historia", "Geografia", "Ciencias"],
+    "notas": ["1c", "1ca", "2c", "2ca", "pfv"]
   }
   
