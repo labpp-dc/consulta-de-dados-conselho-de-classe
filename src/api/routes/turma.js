@@ -83,7 +83,7 @@ router.get('/:materias', verifyToken, async function(req, res) {
 router.get('/:notas', verifyToken, async function(req, res) {
 
   try {
-    const { turma materiaEscolhida } = req.params;
+    const { turma, materiaEscolhida } = req.params;
     
     // If para decidir se o get buscará uma matéria especifica ou todas, a variavél filtro é só um boolean.
     
