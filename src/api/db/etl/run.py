@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from pathlib import Path
 
 # =========================
@@ -23,9 +23,9 @@ engine = create_engine(engine_string)
 csv_file_path = 'alunos.csv'
 df = pd.read_csv(csv_file_path)
 
-# =========================
-# LEITURA DOS JSONs
-# =========================
+# ================================================
+# LEITURA DOS JSONs E INSERÇÂO DAS TURMAS NO BANCO
+# ================================================
 
 turmas = {}
 
@@ -33,6 +33,29 @@ turmasJson = [p for p in Path('.').iterdir() if p.suffix == '.json']
 for turma in turmasJson:
     with open(f'{turma}', 'r', encoding='utf-8') as f:
         turmas[f'TURMA_{turma}'] = json.load(f)
+
+        turma_nome = turma.stem # remove ".json"
+
+        #if para discernir se a turma é do regular ou não regular
+        if not turma_nome[0].isdigit():
+
+            #if para discernir entre integrado e proeja
+            if turma_nome[0] == "P":
+                turno = "noturno"
+                serie = int(turma_nome[2])
+            else:
+                turno = "integral"
+                serie = int(turma_nome[2])
+        else:
+            turno = "matutino"
+            serie = int(turma_nome[1])
+
+        #Inserção das turmas utilizando os JSONs
+        with engine.begin() as conn:
+            conn.execute(
+                text("INSERT INTO Turmas(nome, turno, serie) VALUES(:nome, :turno, :serie)"),
+                {"nome":turma_nome, "turno": turno, "serie": serie}
+            )
 
 # =========================
 # VALIDAÇÃO DAS COLUNAS
@@ -58,6 +81,13 @@ print(' CSV validado com sucesso contra os arquivos JSON')
 # =========================
 # INSERÇÃO NO POSTGRESQL
 # =========================
+
+with engine.begin() as conn:
+    conn.execute(
+        text("INSERT INTO estudante(nome, nomeSocial, matricula, suspenso, foto, turma_id)VALUES (:nome, :nomeSocial, :matricula, :suspenso, :foto, :turma_id)RETURNING id, nome,nomeSocial, matricula, suspenso, foto, turma_id"),
+        {"nome":nome, "nomeSocial":nomeSocial, "matricula":matricula, "suspenso":suspenso, "foto":foto, "turma_id":turma_id}
+    )
+ 
 
 table_name = 'notas'
 
