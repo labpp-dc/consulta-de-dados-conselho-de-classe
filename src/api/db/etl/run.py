@@ -60,7 +60,7 @@ for turma in turmasJson:
 
             turma_id = result.scalar()
             turma_ids[turma_nome] = turma_id
-
+            for materia in m
 # =========================
 # VALIDAÇÃO DAS COLUNAS
 # =========================
@@ -85,6 +85,21 @@ print(' CSV validado com sucesso contra os arquivos JSON')
 # =========================
 # INSERÇÃO NO POSTGRESQL
 # =========================
+with engine.begin() as conn:
+    
+    #inserção de matérias
+    for turma_nome, turma_cfg in turmas.items():
+        turma_id = turma_ids.get(turma_nome)
+
+        if turma_id is None:
+            raise ValueError(f"Turma '{turma_nome}' não encontrada")
+
+        for materia in turma_cfg['materia']:
+            conn.execute(
+                text("INSERT INTO Materia (nome, turma_id) VALUES (:nome, :turma_id) RETURNING id, nome, turma_id"), 
+                {"nome":materia, "turma_id":turma_id}
+            )
+
 
 with engine.begin() as conn:
 
@@ -95,10 +110,12 @@ with engine.begin() as conn:
         if turma_id is None:
             raise ValueError(f"Turma '{turma_nome}' não encontrada")
 
-    conn.execute(
-        text("INSERT INTO estudante(nome, nomeSocial, matricula, suspenso, foto, turma_id)VALUES (:nome, :nomeSocial, :matricula, :suspenso, :foto, :turma_id)RETURNING id, nome,nomeSocial, matricula, suspenso, foto, turma_id"),
-        {"nome":row["nome"], "nomeSocial":row.get("nomeSocial"), "matricula":row["matricula"], "suspenso":row.get("suspenso"), "foto":row.get("foto"), "turma_id":turma_id}
-    )
+        conn.execute(
+            text("INSERT INTO estudante(nome, nomeSocial, matricula, suspenso, foto, turma_id)VALUES (:nome, :nomeSocial, :matricula, :suspenso, :foto, :turma_id)RETURNING id, nome,nomeSocial, matricula, suspenso, foto, turma_id"),
+            {"nome":row["nome"], "nomeSocial":row.get("nomeSocial"), "matricula":row["matricula"], "suspenso":row.get("suspenso"), "foto":row.get("foto"), "turma_id":turma_id}
+        )
+     
+
  
 
 table_name = 'notas'
