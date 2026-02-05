@@ -28,6 +28,7 @@ df = pd.read_csv(csv_file_path)
 # ================================================
 
 turmas = {}
+turma_ids = {}
 
 turmasJson = [p for p in Path('.').iterdir() if p.suffix == '.json']
 for turma in turmasJson:
@@ -40,9 +41,9 @@ for turma in turmasJson:
         if not turma_nome[0].isdigit():
 
             #if para discernir entre integrado e proeja
-            if turma_nome[0] == "P":
+            if turma_nome[2].isdigit():
                 turno = "noturno"
-                serie = int(turma_nome[2])
+                serie = turma_nome[4]        # regra ainda indefinida
             else:
                 turno = "integral"
                 serie = int(turma_nome[2])
@@ -52,10 +53,13 @@ for turma in turmasJson:
 
         #Inserção das turmas utilizando os JSONs
         with engine.begin() as conn:
-            conn.execute(
-                text("INSERT INTO Turmas(nome, turno, serie) VALUES(:nome, :turno, :serie)"),
+            result = conn.execute(
+                text("INSERT INTO Turmas(nome, turno, serie) VALUES(:nome, :turno, :serie) RETURNING id"),
                 {"nome":turma_nome, "turno": turno, "serie": serie}
             )
+
+            turma_id = result.scalar()
+            turma_ids[turma_nome] = turma_id
 
 # =========================
 # VALIDAÇÃO DAS COLUNAS
@@ -83,9 +87,17 @@ print(' CSV validado com sucesso contra os arquivos JSON')
 # =========================
 
 with engine.begin() as conn:
+
+    for _, row in df.iterrows():
+        turma_nome = row['turma']
+        turma_id = turma_ids.get(turma_nome)
+
+        if turma_id is None:
+            raise ValueError(f"Turma '{turma_nome}' não encontrada")
+
     conn.execute(
         text("INSERT INTO estudante(nome, nomeSocial, matricula, suspenso, foto, turma_id)VALUES (:nome, :nomeSocial, :matricula, :suspenso, :foto, :turma_id)RETURNING id, nome,nomeSocial, matricula, suspenso, foto, turma_id"),
-        {"nome":nome, "nomeSocial":nomeSocial, "matricula":matricula, "suspenso":suspenso, "foto":foto, "turma_id":turma_id}
+        {"nome":row["nome"], "nomeSocial":row.get("nomeSocial"), "matricula":row["matricula"], "suspenso":row.get("suspenso"), "foto":row.get("foto"), "turma_id":turma_id}
     )
  
 
