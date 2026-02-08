@@ -33,9 +33,8 @@ turma_ids = {}
 turmasJson = [p for p in Path('.').iterdir() if p.suffix == '.json']
 for turma in turmasJson:
     with open(f'{turma}', 'r', encoding='utf-8') as f:
-        turmas[f'TURMA_{turma}'] = json.load(f)
-
         turma_nome = turma.stem # remove ".json"
+        turmas[turma_nome] = json.load(f)
 
         #if para discernir se a turma é do regular ou não regular
         if not turma_nome[0].isdigit():
@@ -60,7 +59,7 @@ for turma in turmasJson:
 
             turma_id = result.scalar()
             turma_ids[turma_nome] = turma_id
-            for materia in m
+            
 # =========================
 # VALIDAÇÃO DAS COLUNAS
 # =========================
@@ -85,9 +84,13 @@ print(' CSV validado com sucesso contra os arquivos JSON')
 # =========================
 # INSERÇÃO NO POSTGRESQL
 # =========================
+
+materia_ids = {}
+
+#Inserção de matérias
+
 with engine.begin() as conn:
-    
-    #inserção de matérias
+        
     for turma_nome, turma_cfg in turmas.items():
         turma_id = turma_ids.get(turma_nome)
 
@@ -95,11 +98,17 @@ with engine.begin() as conn:
             raise ValueError(f"Turma '{turma_nome}' não encontrada")
 
         for materia in turma_cfg['materia']:
-            conn.execute(
+            result = conn.execute(
                 text("INSERT INTO Materia (nome, turma_id) VALUES (:nome, :turma_id) RETURNING id, nome, turma_id"), 
                 {"nome":materia, "turma_id":turma_id}
             )
+            materia_id = result.scalar()
+            materia_ids[(turma_nome, materia)] = materia_id
 
+
+estudante_ids = {}
+
+#Inserção de Estudantes
 
 with engine.begin() as conn:
 
@@ -110,24 +119,44 @@ with engine.begin() as conn:
         if turma_id is None:
             raise ValueError(f"Turma '{turma_nome}' não encontrada")
 
-        conn.execute(
+        result = conn.execute(
             text("INSERT INTO estudante(nome, nomeSocial, matricula, suspenso, foto, turma_id)VALUES (:nome, :nomeSocial, :matricula, :suspenso, :foto, :turma_id)RETURNING id, nome,nomeSocial, matricula, suspenso, foto, turma_id"),
             {"nome":row["nome"], "nomeSocial":row.get("nomeSocial"), "matricula":row["matricula"], "suspenso":row.get("suspenso"), "foto":row.get("foto"), "turma_id":turma_id}
         )
-     
 
- 
+        estudante_id = result.scalar()
+        estudante_ids[row["matricula"]] = estudante_id
 
-table_name = 'notas'
 
-try:
-    df.to_sql(
-        table_name,
-        con=engine,
-        if_exists='replace',
-        index=False,
-        chunksize=1000
-    )
-    print(f" Dados carregados com sucesso na tabela '{table_name}'")
-except Exception as e:
-    print(f" Erro ao carregar dados: {e}")
+#Inserção de Notas
+
+with engine.begin() as conn:
+
+    for _, row in df.iterrows():
+        matriculaDeEstudante = row['matricula']
+        estudante_id = estudante_ids.get(matriculaDeEstudante)
+
+        turma_nome = row["turma"]
+        turma_cfg = turmas[turma_nome]
+
+        if estudante_id is None:
+            raise ValueError(f"Estudante de matricula '{matriculaDeEstudante}' não encontrada")
+
+        for materia in turma_cfg['materia']:
+            
+            materia_id = materia_ids.get((turma_nome, materia))
+            cert1= row.get(f"{materia}_1c")
+            apoio1= row.get(f"{materia}_1ca")
+            cert2= row.get(f"{materia}_2c")
+            apoio2= row.get(f"{materia}_2ca")
+            pfv= row.get(f"{materia}_pfv")
+
+
+            if materia_id is None:
+                raise ValueError(f"Materia de nome '{materia}' não encontrada")
+            
+
+            result = conn.execute(
+                text("INSERT INTO Notas(cert1, apoio1, cert2, apoio2, pfv, estudante_id, materia_id)VALUES (:cert1, :apoio1, :cert2, :apoio2, :pfv, :estudante_id, :materia_id)RETURNING id, cert1,apoio1, cert2, apoio2, pfv, estudante_id, materia_id"),
+                {"cert1":cert1, "apoio1":apoio1, "cert2":cert2, "apoio2":apoio2, "pfv":pfv, "estudante_id":estudante_id, "materia_id":materia_id}
+            )
