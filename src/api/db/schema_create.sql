@@ -38,7 +38,7 @@ CREATE TABLE estudante (
     
     CONSTRAINT pk_usuario PRIMARY KEY (id),
     CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9), -- comprimento
-    turma_id INTEGER NOT NULL,
+    turma_id bigint NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id)
     
 );
@@ -48,8 +48,8 @@ CREATE TABLE TurmaEstudante (
     id bigint GENERATED ALWAYS AS IDENTITY,
 
     CONSTRAINT pk_turmaEstudante PRIMARY KEY (id),
-    turma_id INTEGER NOT NULL,
-    estudante_id INTEGER NOT NULL,
+    turma_id bigint NOT NULL,
+    estudante_id bigint NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id),
     FOREIGN KEY (estudante_id) REFERENCES estudante(id)
 
@@ -60,7 +60,7 @@ CREATE TABLE Materia(
     nome TEXT NOT NULL,
     
     CONSTRAINT pk_materia PRIMARY KEY (id),
-    turma_id INTEGER NOT NULL,
+    turma_id bigint NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id)
 );
 INSERT INTO Materia (nome, turma_id) VALUES ('LP4', 1);
@@ -69,8 +69,8 @@ CREATE TABLE TurmaMateria (
     id bigint GENERATED ALWAYS AS IDENTITY,
 
     CONSTRAINT pk_turmaMateria PRIMARY KEY (id),
-    turma_id INTEGER NOT NULL,
-    materia_id INTEGER NOT NULL,
+    turma_id bigint NOT NULL,
+    materia_id bigint NOT NULL,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id),
     FOREIGN KEY (materia_id) REFERENCES Materia(id)
 );
@@ -84,8 +84,8 @@ CREATE TABLE Notas (
     pfv FLOAT,
 
     CONSTRAINT pk_notas PRIMARY KEY (id),
-    estudante_id INTEGER NOT NULL,
-    materia_id INTEGER NOT NULL,
+    estudante_id bigint NOT NULL,
+    materia_id bigint NOT NULL,
     UNIQUE (estudante_id, materia_id),
     FOREIGN KEY (estudante_id) REFERENCES estudante(id),
     FOREIGN KEY (materia_id) REFERENCES Materia(id)
@@ -98,7 +98,7 @@ CREATE TABLE Relatorio(
     data TIMESTAMP NOT NULL,
 
     CONSTRAINT pk_relatorio PRIMARY KEY (id),
-    estudante_id INTEGER NOT NULL,
+    estudante_id bigint NOT NULL,
     FOREIGN KEY(estudante_id) REFERENCES estudante(id)
 );
 
