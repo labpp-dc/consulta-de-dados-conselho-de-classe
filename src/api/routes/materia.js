@@ -6,7 +6,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todas as matérias */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT materia.id, materia.nome, materia.turma_id, Turmas.Nome AS Turma, Turmas.serie AS serie FROM materia JOIN Turmas ON Turmas.id = materia.turma_id ORDER BY materia.id');
+    const result = await pool.query('SELECT materia.id, materia.nome, Turmas.Nome AS Turma, Turmas.serie AS serie FROM materia JOIN Turmas ON Turmas.id = TurmaMateria.turma_id JOIN TurmaMateria ON materia.id = TurmaMateria.materia_id ORDER BY materia.id');
     res.json({
       success: true,
       data: result.rows
@@ -66,10 +66,9 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     }
 
     // Insert
-    const result = await pool.query(
-      'INSERT INTO Materia (nome, turma_id) VALUES ($1, $2) RETURNING id, nome, turma_id',
-      [nome, turma_id]
-    );
+    const query = `WITH nova_materia AS ( INSERT INTO materia (nome) VALUES ($1) RETURNING id), INSERT INTO TurmaMateria (materia_id, turma_id) SELECT id, $2 FROM nova_materia;`
+
+    const result = await pool.query(query, [nome, turma_id]);
 
     // http status 201 - Created
     res.status(201).json({
@@ -98,10 +97,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { nome, turma_id } = req.body;
+    const { nome } = req.body;
     
     // Validação básica
-    if (!nome  || !turma_id) {
+    if (!nome) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
@@ -119,9 +118,10 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
       });
     }
     
-    let query, params;    
-    query = 'UPDATE Materia SET nome = $1, turma_id = $2 WHERE id = $3 RETURNING id, nome, turma_id';
-    params = [nome, turma_id, id];    
+    let query, params;
+    query = 'UPDATE materia SET nome = $1 WHERE id = $2 RETURNING id, nome';
+    params = [ nome, id];
+
     const result = await pool.query(query, params);
     
     res.json({
@@ -165,7 +165,7 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
     
     res.json({
       success: true,
-      message: 'Materia deletada com sucesso'
+      message: 'Matéria deletada com sucesso'
     });
   } catch (error) {
     console.error('Erro ao deletar materia:', error);

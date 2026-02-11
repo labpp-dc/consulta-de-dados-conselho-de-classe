@@ -6,7 +6,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todos os estudantes */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.suspenso, estudante.matricula, estudante.foto,  Turmas.Nome AS Turma, Turmas.serie AS serie FROM estudante JOIN Turmas ON Turmas.id = estudante.turma_id ORDER BY estudante.id');
+    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, estudante.foto, Turmas.Nome AS Turma, Turmas.serie AS serie FROM estudante JOIN TurmaEstudante ON estudante.id = TurmaEstudante.estudante_id JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id JOIN TurmaEstudante ON estudante.id = TurmaEstudante.estudante_id ORDER BY estudante.id');
     res.json({
       success: true,
       data: result.rows
@@ -83,7 +83,7 @@ router.get('/:notas', verifyToken, async function(req, res) {
 /* POST - Criar novo estudante */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
-    const { nome, nomeSocial, matricula, suspenso, foto, turma_id } = req.body;
+    const { nome, nomeSocial, matricula, foto, turma_id } = req.body;
     
     // Validação básica
     if (!nome  || !matricula  || !foto  || !turma_id) {
@@ -104,10 +104,9 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     }
 
     // Insert
-    const result = await pool.query(
-      'INSERT INTO estudante (nome, nomeSocial, matricula, suspenso, foto, turma_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, nome, nomeSocial, matricula, suspenso, foto, turma_id',
-      [nome, nomeSocial, matricula, suspenso, foto, turma_id]
-    );
+    const query = `WITH novo_estudante AS ( INSERT INTO estudante (nome, nomeSocial, matrícula, foto) VALUES ($1, $2, $3, $4) RETURNING id), INSERT INTO TurmaEstudante (estudante_id, turma_id) SELECT id, $5 FROM novo_estudante;`
+
+    const result = await pool.query(query, [nome, nomeSocial, matricula, foto, turma_id]);
 
     // http status 201 - Created
     res.status(201).json({
@@ -136,7 +135,7 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
 router.put('/:id', verifyToken, isAdmin, async function(req, res) {
   try {
     const { id } = req.params;
-    const { nome, nomeSocial, matricula, suspenso, foto, turma_id } = req.body;
+    const { nome, nomeSocial, matricula, foto, turma_id } = req.body;
     
     // Validação básica
     if (!nome  || !matricula  || !foto  || !turma_id) {
@@ -168,8 +167,8 @@ router.put('/:id', verifyToken, isAdmin, async function(req, res) {
     }
     
     let query, params;    
-    query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, suspenso = $4, foto = $5, turma_id = $6 WHERE id = $7 RETURNING id,  nome, nomeSocial, matricula, suspenso, foto, turma_id';
-    params = [ nome, nomeSocial, matricula, suspenso, foto, turma_id, id];    
+    query = 'UPDATE estudante SET nome = $1, nomeSocial = $2, matricula = $3, foto = $4 WHERE id = $5 RETURNING id,  nome, nomeSocial, matricula, foto';
+    params = [ nome, nomeSocial, matricula, foto, id];    
     const result = await pool.query(query, params);
     
     res.json({

@@ -92,7 +92,7 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Login,  e senha são obrigatórios'
+        message: 'Login e senha são obrigatórios'
       });
     }
     

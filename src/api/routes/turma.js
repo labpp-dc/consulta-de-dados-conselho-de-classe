@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('../db/config');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 /* GET - Buscar todas as turmas */
@@ -26,7 +24,7 @@ router.get('/', verifyToken, async function(req, res) {
 router.get('/:estudantes', verifyToken, async function(req, res) {
   try {
     const { nome} = req.params;
-    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma JOIN Turmas ON Turmas.id = estudante.turma_id WHERE  Turmas.nome = $1 RETURNING * ORDER BY estudante.id;', [nome]);
+    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma FROM TurmaEstudante JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id JOIN estudante ON estudante.id = TurmaEstudante.estudante_id WHERE Turmas.nome = $1 ORDER BY estudante.id;', [nome]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -54,7 +52,7 @@ router.get('/:estudantes', verifyToken, async function(req, res) {
 router.get('/:materias', verifyToken, async function(req, res) {
   try {
     const { nome } = req.params;
-    const result = await pool.query('SELECT materia.id, materia.nome, Turmas.nome AS turma, JOIN Turmas ON Turmas.id = materia.turma_id WHERE Turmas.nome = $1 RETURNING * ORDER BY materia.id;', [nome]);
+    const result = await pool.query('SELECT materia.id, materia.nome, Turmas.nome AS turma FROM TurmaMateria JOIN Turmas ON Turmas.id = TurmaMateria.turma_id JOIN Materia ON materia.id = TurmaMateria.materia_id WHERE Turmas.nome = $1 ORDER BY materia.id;', [nome]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -91,14 +89,14 @@ router.get('/:notas', verifyToken, async function(req, res) {
 
       //Busca de notas de uma matéria espécifica
 
-       const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 AND materia = $2 ORDER BY estudante.id;', [turma, materiaEscolhida]);
+       const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, estudante.nome AS estudante, Turmas.nome AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN estudante ON estudante.id = notas.estudante_id JOIN TurmaEstudante  ON TurmaEstudante.estudante_id = estudante.id JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id WHERE turma = $1 AND Materia.nome = $2 ORDER BY estudante.id;', [turma, materiaEscolhida]);
     }
 
     else{
 
       //Busca de notas de todas as matérias
 
-       const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Turmas AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id JOIN Turmas ON Turmas.id = estudante.turma_id WHERE turma = $1 ORDER BY estudante.id;', [turma]);
+       const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, estudante.nome AS estudante, Turmas.nome AS turma, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN estudante ON estudante.id = notas.estudante_id JOIN TurmaEstudante  ON TurmaEstudante.estudante_id = estudante.id JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id WHERE turma = $1 ORDER BY estudante.id;', [turma]);
 
     }
     

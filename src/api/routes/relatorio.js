@@ -4,7 +4,7 @@ const pool = require('../db/config');
 const { verifyToken, isAdmin } = require('../middlewares/auth');
 
 
-/* GET - Buscar todas os relatórios */
+/* GET - Buscar relatórios */
 router.get('/', verifyToken, async function(req, res) {
     try {
       const result = await pool.query('SELECT * FROM Relatorio ORDER BY id');
@@ -21,6 +21,24 @@ router.get('/', verifyToken, async function(req, res) {
       });
     }
   });
+
+router.get('/:estudante', verifyToken, async function(req, res) {
+    try {
+      const result = await pool.query('SELECT relatorio.id, relatorio.relato, relatorio.data, estudante.nome AS estudante FROM Relatorio JOIN Relatorio_estudante ON Relatorio_estudante.id = Relatorio.id JOIN Relatorio_estudante ON Relatorio.id = Relatorio_estudante.relatorio_id ORDER BY relatorio.id');
+      res.json({
+        success: true,
+        data: result.rows
+      });
+    } catch (error) {
+      console.error('Erro ao buscar os relatórios', error);
+      // http status 500 - Internal Server Error
+      res.status(500).json({
+        success: false,
+        message: 'Erro interno do servidor'
+      });
+    }
+  });
+
 /* POST - Criar nova lista de relatórios */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
   try {
@@ -44,10 +62,10 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
       });
     }
     // Insert
-    const result = await pool.query(
-      'INSERT INTO Relatorio (relato, data, estudante_id) VALUES ($1, $2, $3) RETURNING id, relato, data, estudante_id',
-      [relato, data, estudante_id]
-    );
+    const query = ` WITH novo_relatorio AS ( INSERT INTO Relatorio (relato, data) VALUES ($1, $2) RETURNING id), INSERT INTO Relatorio_estudante (relatorio_id, estudante_id ) SELECT id, $3 FROM novo_relatorio;`
+
+    const result = await pool.query(query, [relato, data, estudante_id]);
+
     // http status 201 - Created
     res.status(201).json({
       success: true,

@@ -1,6 +1,7 @@
 -- Active: 1769282431427@@127.0.0.1@5432@cdcc
 
 DROP TABLE IF EXISTS Funcionario;
+DROP TABLE IF EXISTS Relatorio_estudante;
 DROP TABLE IF EXISTS Relatorio;
 DROP TABLE IF EXISTS Notas;
 DROP TABLE IF EXISTS TurmaMateria;
@@ -33,13 +34,10 @@ CREATE TABLE estudante (
     nome TEXT NOT NULL,
     nomeSocial TEXT,
     matricula TEXT UNIQUE NOT NULL,
-    suspenso INTEGER,
     foto TEXT NOT NULL,
     
     CONSTRAINT pk_usuario PRIMARY KEY (id),
-    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9), -- comprimento
-    turma_id bigint NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
+    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9) -- comprimento
     
 );
 
@@ -50,8 +48,8 @@ CREATE TABLE TurmaEstudante (
     CONSTRAINT pk_turmaEstudante PRIMARY KEY (id),
     turma_id bigint NOT NULL,
     estudante_id bigint NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id),
-    FOREIGN KEY (estudante_id) REFERENCES estudante(id)
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id) ON DELETE CASCADE,
+    FOREIGN KEY (estudante_id) REFERENCES estudante(id) ON DELETE CASCADE
 
 );
 
@@ -59,11 +57,8 @@ CREATE TABLE Materia(
     id bigint GENERATED ALWAYS AS IDENTITY,
     nome TEXT NOT NULL,
     
-    CONSTRAINT pk_materia PRIMARY KEY (id),
-    turma_id bigint NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id)
+    CONSTRAINT pk_materia PRIMARY KEY (id)
 );
-INSERT INTO Materia (nome, turma_id) VALUES ('LP4', 1);
 
 CREATE TABLE TurmaMateria (
     id bigint GENERATED ALWAYS AS IDENTITY,
@@ -71,8 +66,8 @@ CREATE TABLE TurmaMateria (
     CONSTRAINT pk_turmaMateria PRIMARY KEY (id),
     turma_id bigint NOT NULL,
     materia_id bigint NOT NULL,
-    FOREIGN KEY (turma_id) REFERENCES Turmas(id),
-    FOREIGN KEY (materia_id) REFERENCES Materia(id)
+    FOREIGN KEY (turma_id) REFERENCES Turmas(id) ON DELETE CASCADE,
+    FOREIGN KEY (materia_id) REFERENCES Materia(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Notas (
@@ -87,8 +82,8 @@ CREATE TABLE Notas (
     estudante_id bigint NOT NULL,
     materia_id bigint NOT NULL,
     UNIQUE (estudante_id, materia_id),
-    FOREIGN KEY (estudante_id) REFERENCES estudante(id),
-    FOREIGN KEY (materia_id) REFERENCES Materia(id)
+    FOREIGN KEY (estudante_id) REFERENCES estudante(id) ON DELETE CASCADE,
+    FOREIGN KEY (materia_id) REFERENCES Materia(id) ON DELETE CASCADE
 );
 
 
@@ -97,9 +92,18 @@ CREATE TABLE Relatorio(
     relato TEXT,
     data TIMESTAMP NOT NULL,
 
-    CONSTRAINT pk_relatorio PRIMARY KEY (id),
+    CONSTRAINT pk_relatorio PRIMARY KEY (id)
+);
+
+CREATE TABLE Relatorio_estudante(
+    id bigint GENERATED ALWAYS AS IDENTITY,
+
+    CONSTRAINT pk_relatorioEstudante PRIMARY KEY (id),
+    relatorio_id bigint,
     estudante_id bigint NOT NULL,
-    FOREIGN KEY(estudante_id) REFERENCES estudante(id)
+    FOREIGN KEY (relatorio_id) REFERENCES Relatorio(id) ON DELETE CASCADE,
+    FOREIGN KEY (estudante_id) REFERENCES estudante(id) ON DELETE CASCADE
+
 );
 
 CREATE TABLE Funcionario(
