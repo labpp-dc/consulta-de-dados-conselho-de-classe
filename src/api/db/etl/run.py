@@ -46,10 +46,10 @@ for turma in turmasJson:
             #if para discernir entre integrado e proeja
             if turma_nome[2].isdigit():
                 turno = "noturno"
-                serie = turma_nome[4]        # regra ainda indefinida
+                serie = turma_nome[2]        # regra ainda indefinida
             else:
                 turno = "integral"
-                serie = int(turma_nome[2])
+                serie = int(turma_nome[4])
         else:
             turno = "matutino"
             serie = int(turma_nome[1])
