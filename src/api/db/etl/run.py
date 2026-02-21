@@ -23,6 +23,10 @@ engine = create_engine(engine_string)
 csv_file_path = 'alunos.csv'
 df = pd.read_csv(csv_file_path)
 
+# Substitui NaNs por None (que o SQLAlchemy converte para NULL no SQL)
+df = df.where(pd.notnull(df), None)
+
+
 # ================================================
 # LEITURA DOS JSONs E INSERÇÂO DAS TURMAS NO BANCO
 # ================================================
@@ -99,7 +103,8 @@ with engine.begin() as conn:
 
         for materia in turma_cfg['materia']:
             result = conn.execute(
-                text("INSERT INTO Materia (nome, turma_id) VALUES (:nome, :turma_id) RETURNING id, nome, turma_id"), 
+                
+                text("WITH nova_materia AS ( INSERT INTO materia (nome) VALUES (:nome) RETURNING id),INSERT INTO TurmaMateria (materia_id, turma_id) SELECT id, :turma_id FROM nova_materia RETURNING materia_id;"), 
                 {"nome":materia, "turma_id":turma_id}
             )
             materia_id = result.scalar()
@@ -120,7 +125,7 @@ with engine.begin() as conn:
             raise ValueError(f"Turma '{turma_nome}' não encontrada")
 
         result = conn.execute(
-            text("INSERT INTO estudante(nome, nomeSocial, matricula, suspenso, foto, turma_id)VALUES (:nome, :nomeSocial, :matricula, :suspenso, :foto, :turma_id)RETURNING id, nome,nomeSocial, matricula, suspenso, foto, turma_id"),
+            text("WITH novo_estudante AS ( INSERT INTO estudante (nome, nomeSocial, matricula, foto) VALUES (:nome, :nomeSocial, :matricula, :foto) RETURNING id), INSERT INTO TurmaEstudante (estudante_id, turma_id) SELECT id, :turma_id FROM novo_estudante RETURNING estudante_id;"),
             {"nome":row["nome"], "nomeSocial":row.get("nomeSocial"), "matricula":row["matricula"], "suspenso":row.get("suspenso"), "foto":row.get("foto"), "turma_id":turma_id}
         )
 

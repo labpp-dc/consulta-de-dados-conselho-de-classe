@@ -104,7 +104,7 @@ router.post('/', verifyToken, isAdmin, async function(req, res) {
     }
 
     // Insert
-    const query = `WITH novo_estudante AS ( INSERT INTO estudante (nome, nomeSocial, matrícula, foto) VALUES ($1, $2, $3, $4) RETURNING id), INSERT INTO TurmaEstudante (estudante_id, turma_id) SELECT id, $5 FROM novo_estudante;`
+    const query = `WITH novo_estudante AS ( INSERT INTO estudante (nome, nomeSocial, matricula, foto) VALUES ($1, $2, $3, $4) RETURNING id), INSERT INTO TurmaEstudante (estudante_id, turma_id) SELECT id, $5 FROM novo_estudante;`
 
     const result = await pool.query(query, [nome, nomeSocial, matricula, foto, turma_id]);
 
