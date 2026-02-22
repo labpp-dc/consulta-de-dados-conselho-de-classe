@@ -6,7 +6,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth');
 /* GET - Buscar todos os estudantes */
 router.get('/', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, estudante.foto, Turmas.Nome AS Turma, Turmas.serie AS serie FROM estudante JOIN TurmaEstudante ON estudante.id = TurmaEstudante.estudante_id JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id JOIN TurmaEstudante ON estudante.id = TurmaEstudante.estudante_id ORDER BY estudante.id');
+    const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, estudante.foto, Turmas.Nome AS Turma, Turmas.serie AS serie FROM estudante JOIN TurmaEstudante ON estudante.id = TurmaEstudante.estudante_id JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id ORDER BY estudante.id');
     res.json({
       success: true,
       data: result.rows
