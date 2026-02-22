@@ -45,19 +45,19 @@ for turma in turmasJson:
 
             #if para discernir entre integrado e proeja
             if turma_nome[2].isdigit():
-                turno = "noturno"
+                turno = "Integral"
                 serie = turma_nome[2]        # regra ainda indefinida
             else:
-                turno = "integral"
+                turno = "Noturno"
                 serie = int(turma_nome[4])
         else:
-            turno = "matutino"
+            turno = "Matutino"
             serie = int(turma_nome[1])
 
         #Inserção das turmas utilizando os JSONs
         with engine.begin() as conn:
             result = conn.execute(
-                text("INSERT INTO Turmas(nome, turno, serie) VALUES(:nome, :turno, :serie) RETURNING id"),
+                text("INSERT INTO Turmas (nome, turno, serie) VALUES (:nome, :turno, :serie) RETURNING id"),
                 {"nome":turma_nome, "turno": turno, "serie": serie}
             )
 
@@ -104,7 +104,7 @@ with engine.begin() as conn:
         for materia in turma_cfg['materia']:
             result = conn.execute(
                 
-                text("WITH nova_materia AS ( INSERT INTO materia (nome) VALUES (:nome) RETURNING id),INSERT INTO TurmaMateria (materia_id, turma_id) SELECT id, :turma_id FROM nova_materia RETURNING materia_id;"), 
+                text("""WITH nova_materia AS ( INSERT INTO materia (nome) VALUES (:nome) RETURNING id) INSERT INTO TurmaMateria (materia_id, turma_id) SELECT id, :turma_id FROM nova_materia RETURNING materia_id;"""), 
                 {"nome":materia, "turma_id":turma_id}
             )
             materia_id = result.scalar()
@@ -125,7 +125,7 @@ with engine.begin() as conn:
             raise ValueError(f"Turma '{turma_nome}' não encontrada")
 
         result = conn.execute(
-            text("WITH novo_estudante AS ( INSERT INTO estudante (nome, nomeSocial, matricula, foto) VALUES (:nome, :nomeSocial, :matricula, :foto) RETURNING id), INSERT INTO TurmaEstudante (estudante_id, turma_id) SELECT id, :turma_id FROM novo_estudante RETURNING estudante_id;"),
+            text("""WITH novo_estudante AS ( INSERT INTO estudante (nome, nomeSocial, matricula, foto) VALUES (:nome, :nomeSocial, :matricula, :foto) RETURNING id) INSERT INTO TurmaEstudante (estudante_id, turma_id) SELECT id, :turma_id FROM novo_estudante RETURNING estudante_id;"""),
             {"nome":row["nome"], "nomeSocial":row.get("nomeSocial"), "matricula":row["matricula"], "suspenso":row.get("suspenso"), "foto":row.get("foto"), "turma_id":turma_id}
         )
 
@@ -162,6 +162,6 @@ with engine.begin() as conn:
             
 
             result = conn.execute(
-                text("INSERT INTO Notas(cert1, apoio1, cert2, apoio2, pfv, estudante_id, materia_id)VALUES (:cert1, :apoio1, :cert2, :apoio2, :pfv, :estudante_id, :materia_id)RETURNING id, cert1,apoio1, cert2, apoio2, pfv, estudante_id, materia_id"),
+                text("INSERT INTO Notas (cert1, apoio1, cert2, apoio2, pfv, estudante_id, materia_id) VALUES (:cert1, :apoio1, :cert2, :apoio2, :pfv, :estudante_id, :materia_id) RETURNING id, cert1, apoio1, cert2, apoio2, pfv, estudante_id, materia_id"),
                 {"cert1":cert1, "apoio1":apoio1, "cert2":cert2, "apoio2":apoio2, "pfv":pfv, "estudante_id":estudante_id, "materia_id":materia_id}
             )

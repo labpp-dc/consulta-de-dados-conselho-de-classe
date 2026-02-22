@@ -22,7 +22,7 @@ router.get('/', verifyToken, async function(req, res) {
 });
 
 
-/* GET parametrizado - Buscar usuário por ID */
+/* GET parametrizado - Buscar estudante por ID */
 router.get('/:id', verifyToken, async function(req, res) {
   try {
     const { id } = req.params;
@@ -41,7 +41,7 @@ router.get('/:id', verifyToken, async function(req, res) {
       data: result.rows[0]
     });
   } catch (error) {
-    console.error('Erro ao buscar usuário:', error);
+    console.error('Erro ao buscar estudante:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,

@@ -1,6 +1,6 @@
 <script lang="ts">
     // Formulário de estudantes
-    import { Card, Button, Label, Input, Heading, Select } from 'flowbite-svelte'; // UI
+    import { Card, Button, Label, Input, Heading } from 'flowbite-svelte'; // UI
     import { onMount } from 'svelte'; // ciclo de vida
     import api from '$lib/api'; // API backend
     import { goto } from '$app/navigation'; // navegação

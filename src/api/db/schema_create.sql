@@ -23,7 +23,6 @@ CREATE TABLE Turmas (
     -- Fazer um constraint para nome de turma
     -- Criar atributo número para turma
 );
-INSERT INTO Turmas (nome, turno, serie) VALUES ('DS302', 'Integral', 3);
     -- CONSTRAINT ck_usuario_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'), -- formato de email com expressão regular
     -- CONSTRAINT ck_usuario_senha_length CHECK (length(senha) >= 6), -- comprimento mínimo
     -- CONSTRAINT ck_usuario_role_valid CHECK (role IN ( 'user')) -- tipos de usuário
@@ -34,10 +33,10 @@ CREATE TABLE estudante (
     nome TEXT NOT NULL,
     nomeSocial TEXT,
     matricula TEXT UNIQUE NOT NULL,
-    foto TEXT NOT NULL,
+    foto TEXT,
     
-    CONSTRAINT pk_usuario PRIMARY KEY (id),
-    CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9) -- comprimento
+    CONSTRAINT pk_usuario PRIMARY KEY (id)
+    --CONSTRAINT ck_usuario_matricula_length CHECK (length(matricula) = 8 OR length(matricula) = 9) -- comprimento
     
 );
 
