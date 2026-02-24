@@ -78,7 +78,7 @@ type Notas = {
 
   onMount(async () => {
     try {
-      const res = await api.get('/estudante');
+      const res = await api.get(`/estudante/notas`);
       nota = res.data.data;
       console.log(nota);
     } catch (e: any) {
@@ -99,8 +99,7 @@ type Notas = {
   <div class="hidden xl:block">
 
     <!-- Tabela de notas -->
-    <Table class="w-full max-w-7xl
-    mx-auto my-8 shadow-lg border border-gray-200 rounded-lg">
+    <Table class="w-full max-w-7xl mx-auto my-8 shadow-lg border border-gray-200 rounded-lg">
       <TableHead>
         <TableHeadCell class="w-32">Estudante</TableHeadCell>
         <TableHeadCell class="w-16">Materia</TableHeadCell>
