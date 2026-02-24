@@ -105,6 +105,11 @@
             Matéria
           </a>
         </li>
+         <li class="w-full md:w-auto py-2 md:py-0">
+          <a href="/notas" class="block py-2 px-3 text-white hover:text-yellow-400 transition-colors md:p-0">
+            Notas
+          </a>
+        </li>
 
         {#if hasToken}
           <li class="w-full md:w-auto md:ml-4 border-t md:border-t-0 md:border-l border-blue-400 pt-2 md:pt-0 md:pl-6">

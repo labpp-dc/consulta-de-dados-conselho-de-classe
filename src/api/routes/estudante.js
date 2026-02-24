@@ -55,7 +55,7 @@ router.get('/:id', verifyToken, async function(req, res) {
 router.get('/:notas', verifyToken, async function(req, res) {
   try {
     const { nome } = req.params;
-    const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id WHERE Estudante.nome = $1 ORDER BY notas.id;', [nome]);
+    const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Estudante.matricula As matricula, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id WHERE Estudante.nome = $1 ORDER BY notas.id;', [nome]);
 
     if (result.rows.length === 0) {
       // http status 404 - Not Found
@@ -223,5 +223,79 @@ router.delete('/:id', verifyToken, isAdmin, async function(req, res) {
     });
   }
 });
+
+/* DELETE - Remover nota especifica*/
+router.delete('/nota/:id', verifyToken, isAdmin, async function(req, res) {
+  try {
+    const { id } = req.params;
+    
+    // Verificar se o usuário existe
+    const userExists = await pool.query('SELECT id FROM Notas WHERE id = $1', [id]);
+    if (userExists.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Nota não encontrada'
+      });
+    }
+    
+    await pool.query('DELETE FROM Notas WHERE id = $1', [id]);
+    
+    res.json({
+      success: true,
+      message: 'Nota deletada com sucesso'
+    });
+  } catch (error) {
+    console.error('Erro ao deletar nota:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+/* DELETE - Remover nota especifica*/
+router.delete('/notas/:matricula', verifyToken, isAdmin, async function(req, res) {
+  try {
+    const { matricula } = req.params;
+    
+    // Verificar se o usuário existe
+    const estudante = await pool.query('SELECT id FROM estudante WHERE matricula = $1', [matricula]);
+
+    if (estudante.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Estudante não encontrada'
+      });
+    }
+
+    const userExists = await pool.query('SELECT id FROM Notas WHERE estudante_id = $1', [estudante.rows[0].id]);
+
+    if (userExists.rows.length === 0) {
+      // http status 404 - Not Found
+      return res.status(404).json({
+        success: false,
+        message: 'Notas não encontradas'
+      });
+    }
+    
+    await pool.query('DELETE FROM Notas WHERE estudante_id = $1', [estudante.rows[0].id]);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Notas deletadas com sucesso'
+    });
+  } catch (error) {
+    console.error('Erro ao deletar notas:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
 
 module.exports = router;
