@@ -122,6 +122,22 @@ router.get('/notas/:turma', verifyToken, async function(req, res) {
   }
 });
 
+/* GET parametrizado- Buscar turma por id */
+router.get('/:id', verifyToken, async function(req, res) {
+  try {
+    const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno FROM Turmas WHERE id = $1;', [id]);
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  } catch (error) {
+    console.error('Erro ao buscar a turma:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
 
 /* POST - Criar nova turma */
 router.post('/', verifyToken, isAdmin, async function(req, res) {
