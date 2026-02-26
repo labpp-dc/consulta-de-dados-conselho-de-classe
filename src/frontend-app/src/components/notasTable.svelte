@@ -123,7 +123,7 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-              {#if nota.cert1 < 6}
+              {#if nota.cert1 < 5}
                 <span class="text-red-500">{nota.cert1}</span>
               {:else if nota.cert1 >= 6 }
                 <span class="text-blue-500">{nota.cert1}</span>
@@ -149,7 +149,7 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-              {#if nota.cert2 < 6}
+              {#if nota.cert2 < 5}
                 <span class="text-red-500">{nota.cert2}</span>
               {:else if nota.cert2 >= 6 }
                 <span class="text-blue-500">{nota.cert2}</span>
