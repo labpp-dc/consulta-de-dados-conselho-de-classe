@@ -123,7 +123,13 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-            <span>{nota.cert1}</span>
+              {#if nota.cert1 < 6}
+                <span class="text-red-500">{nota.cert1}</span>
+              {:else if nota.cert1 >= 6 }
+                <span class="text-blue-500">{nota.cert1}</span>
+              {:else}
+                <span class="text-green-500">{nota.cert1}</span>
+              {/if}
             </div>
             {/each}
             </TableBodyCell>
@@ -131,7 +137,11 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-            <span>{nota.apoio1}</span>
+              {#if nota.apoio1 < 6}
+                <span class="text-red-500">{nota.apoio1}</span>
+              {:else}
+                <span class="text-blue-500">{nota.apoio1}</span>
+              {/if}
             </div>
             {/each}
             </TableBodyCell>
@@ -139,7 +149,13 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-            <span>{nota.cert2}</span>
+              {#if nota.cert2 < 6}
+                <span class="text-red-500">{nota.cert2}</span>
+              {:else if nota.cert2 >= 6 }
+                <span class="text-blue-500">{nota.cert2}</span>
+              {:else}
+                <span class="text-green-500">{nota.cert2}</span>
+              {/if}
             </div>
             {/each}
             </TableBodyCell>
@@ -147,7 +163,11 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-            <span>{nota.apoio2}</span>
+              {#if nota.apoio2 < 6}
+                <span class="text-red-500">{nota.apoio2}</span>
+              {:else}
+                <span class="text-blue-500">{nota.apoio2}</span>
+              {/if}
             </div>
             {/each}
             </TableBodyCell>
@@ -155,8 +175,12 @@ type Boletim = {
             {#each Object.entries(aluno.boletim) as [materia, nota]}
             <div class="flex justify-between border-b last:border-0 py-1">
             <span class="font-medium">{materia}:</span>
-            <span>{nota.pfv}</span>
-            </div>
+              {#if nota.pfv < 6}
+                <span class="text-red-500">{nota.pfv}</span>
+              {:else}
+                <span class="text-blue-500">{nota.pfv}</span>
+              {/if}
+              </div>
             {/each}
             </TableBodyCell>
           </TableBodyRow>
