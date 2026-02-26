@@ -22,12 +22,11 @@
         nome:string; 
         nomeSocial:string;
         matricula:string;
-        suspenso:number;
         foto:string | ArrayBuffer;
         turma_id:number;
     };
     let turmas: Turma[] =[];
-    let estudante: Estudante = { id: 0, nome: '', nomeSocial: '', matricula: '', suspenso: 0, foto: '', turma_id:0 }; // dados do form
+    let estudante: Estudante = { id: 0, nome: '', nomeSocial: '', matricula: '', foto: '', turma_id:0 }; // dados do form
     let loading = false;
     let error = '';
   
@@ -123,13 +122,7 @@
         <Input id="matricula" bind:value={estudante.matricula} placeholder="Escreva a matricula" required class="mt-1" />
       </div>
       <!-- Campo curso -->
-      <div>
-        <Label for="suspenso">Suspenso</Label>
-        <select name="suspenso" id="suspenso" bind:value={estudante.suspenso}>
-            <option value=1>Suspenso</option>
-            <option value=0>Livre</option>
-        </select>
-      </div>
+      
 
       <!-- Campo turma -->
       <div>
