@@ -8,19 +8,24 @@
   import { onMount } from 'svelte'; // ciclo de vida
 
 
-type Notas = {
-    id: number;
-    cert1:number;
-    apoio1:number; 
-    cert2:number;
-    apoio2:number;
-    pfv:number;   
+type Estudante = {
+    id: number;   
     materia:string;
     estudante:string;
     matricula:string;
+    boletim: Record<string, Boletim>;
   };
+// tipo para boletim, com as notas de cada avaliação
+type Boletim = {
+  cert1:number | null;
+  apoio1:number | null; 
+  cert2:number | null;
+  apoio2:number | null;
+  pfv:number | null;
+};
 
-  let nota: Notas[] = []; // lista de usuários
+  let boletim: Estudante[] = []; // lista de estudantes
+  let nota: Boletim[] = []; // lista de boletins
   let loading = true;
   let error = '';
   let deletingId: number | null = null; // id em deleção
@@ -56,7 +61,7 @@ type Notas = {
     error = '';
     try {
       await api.delete(`/estudante/nota/${id}`);
-      nota = nota.filter(nota => nota.id !== id);
+      boletim = boletim.filter(boletim => boletim.id !== id);
     } catch (e: any) {
       console.error('Erro ao deletar nota:', e);
       error = e.response?.data?.message || 'Erro ao remover nota.';
@@ -79,8 +84,8 @@ type Notas = {
   onMount(async () => {
     try {
       const res = await api.get(`/estudante/notas`);
-      nota = res.data.data;
-      console.log(nota);
+      boletim = res.data.data;
+      console.log(boletim);
     } catch (e: any) {
       console.error('Erro ao carregar nota do estudante:', e);
       error = e.response?.data?.message || 'Erro ao carregar nota do estudante';
@@ -102,44 +107,57 @@ type Notas = {
     <Table class="w-full max-w-7xl mx-auto my-8 shadow-lg border border-gray-200 rounded-lg">
       <TableHead>
         <TableHeadCell class="w-32">Estudante</TableHeadCell>
-        <TableHeadCell class="w-16">Materia</TableHeadCell>
         <TableHeadCell class="w-16">Matrícula</TableHeadCell>
         <TableHeadCell class="w-16">1 certificação</TableHeadCell>
         <TableHeadCell class="w-16">apoio 1</TableHeadCell> 
         <TableHeadCell class="w-16">2 certificação</TableHeadCell>
         <TableHeadCell class="w-16">apoio 2</TableHeadCell>
         <TableHeadCell class="w-16">pfv</TableHeadCell>
-        <TableHeadCell class="w-32"></TableHeadCell><!-- coluna para editar/remover -->
       </TableHead>
       <TableBody>
-        {#each nota as nota}
+        {#each boletim as aluno}
           <TableBodyRow>
-            <TableBodyCell>{nota.estudante}</TableBodyCell>
-            <TableBodyCell>{nota.materia}</TableBodyCell>
-            <TableBodyCell>{nota.matricula}</TableBodyCell>
-            <TableBodyCell>{nota.cert1}</TableBodyCell>
-            <TableBodyCell>{nota.apoio1}</TableBodyCell>
-            <TableBodyCell>{nota.cert2}</TableBodyCell>
-            <TableBodyCell>{nota.apoio2}</TableBodyCell>
-            <TableBodyCell>{nota.pfv}</TableBodyCell>
+            <TableBodyCell>{aluno.estudante}</TableBodyCell>
+            <TableBodyCell>{aluno.matricula}</TableBodyCell>
             <TableBodyCell>
-              <!-- Botão editar -->
-              <button
-                class="p-2 rounded border border-primary-200 hover:border-primary-400 transition bg-transparent"
-                title="Editar"
-                on:click={() => goto(`/estudante/nota/edit/${nota.id}`)}
-              >
-                <UserEditOutline class="w-5 h-5 text-primary-500" />
-              </button>
-              <!-- Botão remover -->
-              <button
-                title="Remover"
-                class="p-2 rounded border border-red-100 hover:border-red-300 transition bg-transparent"
-                on:click={() => openConfirm(nota.id)}
-                disabled={deletingId === nota.id || loading}
-              >
-                <TrashBinOutline class="w-5 h-5 text-red-400" />
-              </button>
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+            <div class="flex justify-between border-b last:border-0 py-1">
+            <span class="font-medium">{materia}:</span>
+            <span>{nota.cert1}</span>
+            </div>
+            {/each}
+            </TableBodyCell>
+            <TableBodyCell>
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+            <div class="flex justify-between border-b last:border-0 py-1">
+            <span class="font-medium">{materia}:</span>
+            <span>{nota.apoio1}</span>
+            </div>
+            {/each}
+            </TableBodyCell>
+            <TableBodyCell>
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+            <div class="flex justify-between border-b last:border-0 py-1">
+            <span class="font-medium">{materia}:</span>
+            <span>{nota.cert2}</span>
+            </div>
+            {/each}
+            </TableBodyCell>
+            <TableBodyCell>
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+            <div class="flex justify-between border-b last:border-0 py-1">
+            <span class="font-medium">{materia}:</span>
+            <span>{nota.apoio2}</span>
+            </div>
+            {/each}
+            </TableBodyCell>
+            <TableBodyCell>
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+            <div class="flex justify-between border-b last:border-0 py-1">
+            <span class="font-medium">{materia}:</span>
+            <span>{nota.pfv}</span>
+            </div>
+            {/each}
             </TableBodyCell>
           </TableBodyRow>
         {/each}
@@ -149,39 +167,66 @@ type Notas = {
   <!-- Cards para telas pequenas -->
   <div class="block xl:hidden">
     <div class="flex flex-col items-center gap-4 my-8 max-w-3xl mx-auto md:grid md:grid-cols-2">
-      {#each nota as nota}
+      {#each boletim as aluno}
         <!-- Card de usuário -->
         <Card class="max-w-sm w-full p-0 overflow-hidden shadow-lg border border-gray-200">
           <div class="px-4 pt-4 pb-2 bg-gray-100 text-left flex items-center justify-between">
             <div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.estudante}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.matricula}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.materia}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.cert1}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.apoio1}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.cert2}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.apoio2}</div>
-              <div class="text-lg font-semibold text-gray-800 text-left">{nota.pfv}</div>
-              <div class="text-xs text-gray-400 text-left">ID: {nota.id}</div>
-            </div>
-            <div class="flex gap-2">
-              <!-- Botão editar -->
-              <button
-                class="p-2 rounded border border-primary-200 hover:border-primary-400 transition bg-transparent"
-                title="Editar"
-                on:click={() => goto(`/estudante/edit/nota/${nota.id}`)}
-              >
-                <UserEditOutline class="w-5 h-5 text-primary-500" />
-              </button>
-              <!-- Botão remover -->
-              <button
-                title="Remover"
-                class="p-2 rounded border border-red-100 hover:border-red-300 transition bg-transparent"
-                on:click={() => openConfirm(nota.id)}
-                disabled={deletingId === nota.id || loading}
-              >
-                <TrashBinOutline class="w-5 h-5 text-red-400" />
-              </button>
+              <div class="text-lg font-semibold text-gray-800 text-left">{aluno.estudante}</div>
+              <div class="text-lg font-semibold text-gray-800 text-left">{aluno.matricula}</div>
+              <div class="text-lg font-semibold text-gray-800 text-left">{aluno.materia}</div>
+              <br>
+              <div class="flex flex-row gap-8">
+              <div class="text-lg font-semibold text-gray-800 text-left flex flex-col">1° Certificação
+              {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between border-b last:border-0 py-1">
+              <span class="font-medium">{materia}:</span>
+              <span>{nota.cert1}</span>
+              </div>
+              {/each}
+              <br>
+              </div>
+              <div class="text-lg font-semibold text-gray-800 text-left flex flex-col">Apoio 1
+              {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between border-b last:border-0 py-1">
+              <span class="font-medium">{materia}:</span>
+              <span>{nota.apoio1}</span>
+              </div>
+              {/each}
+              <br>
+              </div>
+              </div>
+              <div class="flex flex-row gap-8">
+              <div class="text-lg font-semibold text-gray-800 text-left">2° Certificação
+              {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between border-b last:border-0 py-1">
+              <span class="font-medium">{materia}:</span>
+              <span>{nota.cert2}</span>
+              </div>
+              {/each}
+              <br>
+              </div>
+              <div class="text-lg font-semibold text-gray-800 text-left flex flex-col">Apoio 2
+              {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between border-b last:border-0 py-1">
+              <span class="font-medium">{materia}:</span>
+              <span>{nota.apoio2}</span>
+              </div>
+              {/each}
+              <br>
+              </div>
+              </div>
+              <div class="flex flex-row gap-8">
+              <div class="text-lg font-semibold text-gray-800 text-left flex flex-col">PFV
+              {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between border-b last:border-0 py-1">
+              <span class="font-medium">{materia}:</span>
+              <span>{nota.pfv}</span>
+              </div>
+              {/each}
+              <br>
+              </div>
+              </div>
             </div>
           </div>
           <div class="px-4 pb-4 pt-2 flex flex-col gap-2 text-left">

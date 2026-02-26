@@ -24,30 +24,18 @@ router.get('/', verifyToken, async function(req, res) {
 /* GET  - Buscar notas de todos os estudante em todas as matérias  */
 router.get('/notas', verifyToken, async function(req, res) {
   try {
-    const result = await pool.query('SELECT notas.id, notas.cert1, notas.apoio1, notas.cert2, notas.apoio2, notas.pfv, Estudante.nome AS estudante, Estudante.matricula As matricula, Materia.nome AS materia FROM notas JOIN Materia ON Materia.id = notas.materia_id JOIN Estudante ON Estudante.id = notas.estudante_id  ORDER BY notas.id;');
+    const query = `SELECT e.nome AS estudante, e.matricula, jsonb_object_agg(m.nome, jsonb_build_object('cert1', n.cert1, 'apoio1', n.apoio1, 'cert2', n.cert2, 'apoio2', n.apoio2, 'pfv', n.pfv)) AS boletim FROM notas n JOIN Materia m ON m.id = n.materia_id JOIN Estudante e ON e.id = n.estudante_id GROUP BY e.nome, e.matricula ORDER BY e.nome;`;
 
-    if (result.rows.length === 0) {
-      // http status 404 - Not Found
-      return res.status(404).json({
-        success: false,
-        message: 'Notas dos estudantes não encontradas'
-      });
-    }
-    
+    const result = await pool.query(query);
+
     res.json({
       success: true,
       data: result.rows
     });
   } catch (error) {
-    console.error('Erro ao buscar as notas dos estudantes:', error);
-    // http status 500 - Internal Server Error
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
+    res.status(500).json({ success: false, message: 'Erro interno do servidor' });
   }
 });
-
 /* GET parametrizado - Buscar notas do estudante em todas as matérias  */
 router.get('/notas/estudante/:nome', verifyToken, async function(req, res) {
   try {
