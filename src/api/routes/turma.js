@@ -21,7 +21,7 @@ router.get('/', verifyToken, async function(req, res) {
 });
 
 /* GET parametrizado - Buscar estudantes por turma */
-router.get('/:estudantes', verifyToken, async function(req, res) {
+router.get('/estudantes/:nome', verifyToken, async function(req, res) {
   try {
     const { nome} = req.params;
     const result = await pool.query('SELECT estudante.id, estudante.nome, estudante.nomeSocial, estudante.matricula, Turmas.nome AS turma FROM TurmaEstudante JOIN Turmas ON Turmas.id = TurmaEstudante.turma_id JOIN estudante ON estudante.id = TurmaEstudante.estudante_id WHERE Turmas.nome = $1 ORDER BY estudante.id;', [nome]);
@@ -49,7 +49,7 @@ router.get('/:estudantes', verifyToken, async function(req, res) {
 });
 
 /* GET parametrizado - Buscar matérias por turma */
-router.get('/:materias', verifyToken, async function(req, res) {
+router.get('/materias/:nome', verifyToken, async function(req, res) {
   try {
     const { nome } = req.params;
     const result = await pool.query('SELECT materia.id, materia.nome, Turmas.nome AS turma FROM TurmaMateria JOIN Turmas ON Turmas.id = TurmaMateria.turma_id JOIN Materia ON materia.id = TurmaMateria.materia_id WHERE Turmas.nome = $1 ORDER BY materia.id;', [nome]);
@@ -78,7 +78,7 @@ router.get('/:materias', verifyToken, async function(req, res) {
 
 
 /* GET parametrizado - Buscar notas dos estudante de uma turma em todas as matérias  */
-router.get('/:notas', verifyToken, async function(req, res) {
+router.get('/notas/:turma', verifyToken, async function(req, res) {
 
   try {
     const { turma, materiaEscolhida } = req.params;
