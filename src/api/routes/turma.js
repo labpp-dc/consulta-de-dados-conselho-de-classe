@@ -124,6 +124,7 @@ router.get('/notas/:turma', verifyToken, async function(req, res) {
 
 /* GET parametrizado- Buscar turma por id */
 router.get('/:id', verifyToken, async function(req, res) {
+  const { id } = req.params;
   try {
     const result = await pool.query('SELECT Turmas.id, Turmas.nome, Turmas.serie, Turmas.turno FROM Turmas WHERE id = $1;', [id]);
     res.json({
