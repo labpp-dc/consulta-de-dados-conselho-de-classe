@@ -55,7 +55,7 @@
   });
 
   // Expansão de turmas
-  async function toggleTurma(turma: Turma) {
+  async function expandirTurma(turma: Turma) {
     const turmaId = turma.id;
     if (turmasExpandidas[turmaId]) {
       turmasExpandidas[turmaId] = false;
@@ -154,14 +154,14 @@
         <TableHeadCell>Nome</TableHeadCell>
         <TableHeadCell>Turno</TableHeadCell>
         <TableHeadCell>Série</TableHeadCell>
-        <TableHeadCell>Alunos</TableHeadCell>
+        <!--<TableHeadCell>Alunos</TableHeadCell>-->
         <TableHeadCell>Ações</TableHeadCell>
       </TableHead>
       <TableBody>
         {#each turmas as turma}
           <TableBodyRow class="hover:bg-gray-50">
             <TableBodyCell>
-              <button class="p-1 hover:bg-gray-200 rounded-full" on:click={() => toggleTurma(turma)}>
+              <button class="p-1 hover:bg-gray-200 rounded-full" on:click={() => expandirTurma(turma)}>
                 {#if turmasExpandidas[turma.id]}
                   <ChevronDownOutline class="w-5 h-5" />
                 {:else}
@@ -172,16 +172,16 @@
             <TableBodyCell class="font-medium">{turma.nome}</TableBodyCell>
             <TableBodyCell>{turma.turno}</TableBodyCell>
             <TableBodyCell>{turma.serie}ª</TableBodyCell>
-            <TableBodyCell>
+            <!--<TableBodyCell>
               {#if alunosPorTurma[turma.id]}
                 <Badge color="blue">{alunosPorTurma[turma.id].length} alunos</Badge>
               {:else}-
               {/if}
-            </TableBodyCell>
+            </TableBodyCell>-->
             <TableBodyCell>
               <div class="flex gap-1">
-                <button class="p-2 text-primary-500" on:click={() => goto(`/turmas/edit/${turma.id}`)}><UserEditOutline /></button>
-                <button class="p-2 text-red-500" on:click={() => openConfirm(turma.id)}><TrashBinOutline /></button>
+                <button class="p-2 rounded border border-primary-200 hover:border-primary-400 transition bg-transparent" on:click={() => goto(`/turmas/edit/${turma.id}`)}><UserEditOutline class="w-5 h-5 text-primary-500"/></button>
+                <button class="p-2 rounded border border-red-100 hover:border-red-300 transition bg-transparent" on:click={() => openConfirm(turma.id)}><TrashBinOutline class="w-5 h-5 text-red-400" /></button>
               </div>
             </TableBodyCell>
           </TableBodyRow>
@@ -344,13 +344,13 @@
           </div>
 
           <div class="flex gap-2">
-            <button on:click={() => toggleTurma(turma)}>
+            <button on:click={() => expandirTurma(turma)}>
               <ChevronDownOutline class="w-5 h-5" />
             </button>
-            <button on:click={() => goto(`/turmas/edit/${turma.id}`)}>
+            <button on:click={() => goto(`/turmas/edit/${turma.id}`)} class="p-2 rounded border border-primary-200 hover:border-primary-400 transition bg-transparent">
               <UserEditOutline class="w-5 h-5 text-blue-500" />
             </button>
-            <button on:click={() => openConfirm(turma.id)}>
+            <button on:click={() => openConfirm(turma.id)} class="p-2 rounded border border-red-100 hover:border-red-300 transition bg-transparent">
               <TrashBinOutline class="w-5 h-5 text-red-500" />
             </button>
           </div>
@@ -364,7 +364,7 @@
           {:else if alunosPorTurma[turma.id]?.length > 0}
             <div class="flex flex-col gap-3 mt-3">
               {#each alunosPorTurma[turma.id] as aluno}
-                <div class="p-3 border border-gray-300 rounded bg-gray-50 hover:bg-gray-200 flex justify-between items-center">
+                <div class="p-3 border border-gray-300 rounded bg-gray-50 hover:bg-gray-200 flex justify-between items-center" on:click={() => abrirPerfil(aluno, alunosPorTurma[turma.id])}>
                   
                   <div>
                     <div class="font-semibold text-blue-900">{aluno.nome}</div>

@@ -160,18 +160,16 @@
         {#each estudante as est}
           <TableBodyRow>
             <TableBodyCell 
-              class="cursor-pointer font-bold text-blue-600 hover:underline"
-              on:click={() => abrirPerfil(est)}
-            >
-              {est.nome}
+              class="cursor-pointer font-bold text-blue-600 hover:underline">
+              <a on:click={() => abrirPerfil(est)}>{est.nome}</a>
             </TableBodyCell>
             <TableBodyCell>{est.matricula}</TableBodyCell>
             <TableBodyCell>{est.turma}</TableBodyCell>
             <TableBodyCell>
               <div class="flex gap-2">
                 <button on:click={() => abrirPerfil(est)} class="p-2"><UserCircleOutline class="text-gray-500" /></button>
-                <button on:click={() => goto(`/estudante/edit/${est.id}`)} class="p-2"><UserEditOutline class="text-blue-500" /></button>
-                <button on:click={() => openConfirm(est.id)} class="p-2"><TrashBinOutline class="text-red-500" /></button>
+                <button on:click={() => goto(`/estudante/edit/${est.id}`)} class="p-2 rounded border border-primary-200 hover:border-primary-400 transition bg-transparent"><UserEditOutline class="w-5 h-5 text-primary-500"/></button>
+                <button on:click={() => openConfirm(est.id)} class="p-2 rounded border border-red-100 hover:border-red-300 transition bg-transparent"><TrashBinOutline class="w-5 h-5 text-red-400" /></button>
               </div>
             </TableBodyCell>
           </TableBodyRow>
