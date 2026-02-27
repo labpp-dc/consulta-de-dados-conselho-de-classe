@@ -101,93 +101,87 @@ type Boletim = {
   <div class="my-8 text-center text-red-500">{error}</div>
 {:else}
   <!-- Tabela para telas médias/grandes -->
-  <div class="hidden xl:block">
+  <div class="hidden xl:block w-full overflow-x-auto p-4">
+  <div class="max-w-7xl mx-auto shadow-xl border border-gray-200 rounded-xl overflow-hidden bg-white text-sm">
+    
+    <div class="grid grid-cols-[100px_100px_repeat(5,1fr)] bg-gray-50 border-b border-gray-300 font-bold text-gray-700 uppercase tracking-wider">
+      <div class="p-4">Estudante</div>
+      <div class="p-4 text-center">Matrícula</div>
+      <div class="ml-5 p-4 text-center">1ª Cert.</div>
+      <div class="ml-5 p-4 text-center">Apoio 1</div>
+      <div class="p-4 text-center">2ª Cert.</div>
+      <div class="p-4 text-center">Apoio 2</div>
+      <div class="p-4 text-center">PFV</div>
+    </div>
 
-    <!-- Tabela de notas -->
-    <Table class="w-full max-w-7xl mx-auto my-8 shadow-lg border border-gray-200 rounded-lg">
-      <TableHead>
-        <TableHeadCell class="w-32">Estudante</TableHeadCell>
-        <TableHeadCell class="w-16">Matrícula</TableHeadCell>
-        <TableHeadCell class="w-16">1 certificação</TableHeadCell>
-        <TableHeadCell class="w-16">apoio 1</TableHeadCell> 
-        <TableHeadCell class="w-16">2 certificação</TableHeadCell>
-        <TableHeadCell class="w-16">apoio 2</TableHeadCell>
-        <TableHeadCell class="w-16">pfv</TableHeadCell>
-      </TableHead>
-      <TableBody>
-        {#each boletim as aluno}
-          <TableBodyRow>
-            <TableBodyCell>{aluno.estudante}</TableBodyCell>
-            <TableBodyCell>{aluno.matricula}</TableBodyCell>
-            <TableBodyCell>
+    <div class="divide-y divide-gray-200">
+      {#each boletim as aluno}
+        <div class="grid grid-cols-[100px_100px_repeat(5,1fr)] hover:bg-gray-50 transition-colors group">
+          
+          <div class="p-4 flex items-center font-semibold text-gray-900 border-r border-gray-100">
+            {aluno.estudante}
+          </div>
+          
+          <div class="p-4 flex items-center justify-center text-gray-500 border-r border-gray-100">
+            {aluno.matricula}
+          </div>
+
+          <div class="p-2 border-r border-gray-100">
             {#each Object.entries(aluno.boletim) as [materia, nota]}
-            <div class="flex justify-between border-b last:border-0 py-1">
-            <span class="font-medium">{materia}:</span>
-              {#if nota.cert1 >= 5 && nota.cert1 <6}
-                <span class="text-green-500">{nota.cert1}</span>
-              {:else if nota.cert1 >= 6 }
-                <span class="text-blue-500">{nota.cert1}</span>
-              {:else}
-                <span class="text-red-500">{nota.cert1}</span>
-              {/if}
-            </div>
-            {/each}
-            </TableBodyCell>
-            <TableBodyCell>
-            {#each Object.entries(aluno.boletim) as [materia, nota]}
-            <div class="flex justify-between border-b last:border-0 py-1">
-            <span class="font-medium">{materia}:</span>
-              {#if nota.apoio1 < 6}
-                <span class="text-red-500">{nota.apoio1}</span>
-              {:else}
-                <span class="text-blue-500">{nota.apoio1}</span>
-              {/if}
-            </div>
-            {/each}
-            </TableBodyCell>
-            <TableBodyCell>
-            {#each Object.entries(aluno.boletim) as [materia, nota]}
-            <div class="flex justify-between border-b last:border-0 py-1">
-            <span class="font-medium">{materia}:</span>
-              {#if nota.cert2 >= 5 && nota.cert2<6}
-                <span class="text-green-500">{nota.cert2}</span>
-              {:else if nota.cert2 >= 6 }
-                <span class="text-blue-500">{nota.cert2}</span>
-              {:else}
-                <span class="text-red-500">{nota.cert2}</span>
-              {/if}
-            </div>
-            {/each}
-            </TableBodyCell>
-            <TableBodyCell>
-            {#each Object.entries(aluno.boletim) as [materia, nota]}
-            <div class="flex justify-between border-b last:border-0 py-1">
-            <span class="font-medium">{materia}:</span>
-              {#if nota.apoio2 < 6}
-                <span class="text-red-500">{nota.apoio2}</span>
-              {:else}
-                <span class="text-blue-500">{nota.apoio2}</span>
-              {/if}
-            </div>
-            {/each}
-            </TableBodyCell>
-            <TableBodyCell>
-            {#each Object.entries(aluno.boletim) as [materia, nota]}
-            <div class="flex justify-between border-b last:border-0 py-1">
-            <span class="font-medium">{materia}:</span>
-              {#if nota.pfv < 6}
-                <span class="text-red-500">{nota.pfv}</span>
-              {:else}
-                <span class="text-blue-500">{nota.pfv}</span>
-              {/if}
+              <div class="flex justify-between items-center py-1 px-2 border-b last:border-0 border-gray-50">
+                <span class="text-[10px] text-gray-400 uppercase">{materia}</span>
+                <span class="ml-1 font-mono {nota.cert1 >= 6 ? 'text-blue-600' : nota.cert1 >= 5 ? 'text-green-600' : 'text-red-600'}">
+                  {nota.cert1.toFixed(1)}
+                </span>
               </div>
             {/each}
-            </TableBodyCell>
-          </TableBodyRow>
-        {/each}
-      </TableBody>
-    </Table>
+          </div>
+
+          <div class="p-2 border-r border-gray-100 bg-blue-50/20">
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between items-center py-1 px-2 border-b last:border-0 border-gray-50">
+                <span class="font-mono {nota.apoio1 >= 6 ? 'text-blue-600' : 'text-red-600'}">
+                  {nota.apoio1.toFixed(1)}
+                </span>
+              </div>
+            {/each}
+          </div>
+
+          <div class="p-2 border-r border-gray-100">
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between items-center py-1 px-2 border-b last:border-0 border-gray-50">
+                <span class="font-mono {nota.cert2 >= 6 ? 'text-blue-600' : nota.cert2 >= 5 ? 'text-green-600' : 'text-red-600'}">
+                  {nota.cert2.toFixed(1)}
+                </span>
+              </div>
+            {/each}
+          </div>
+
+          <div class="p-2 border-r border-gray-100 bg-blue-50/20">
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between items-center py-1 px-2 border-b last:border-0 border-gray-50">
+                <span class="font-mono {nota.apoio2 >= 6 ? 'text-blue-600' : 'text-red-600'}">
+                  {nota.apoio2.toFixed(1)}
+                </span>
+              </div>
+            {/each}
+          </div>
+
+          <div class="p-2">
+            {#each Object.entries(aluno.boletim) as [materia, nota]}
+              <div class="flex justify-between items-center py-1 px-2 border-b last:border-0 border-gray-50">
+                <span class="font-mono {nota.pfv >= 6 ? 'text-blue-600' : 'text-red-600'}">
+                  {nota.pfv.toFixed(1)}
+                </span>
+              </div>
+            {/each}
+          </div>
+
+        </div>
+      {/each}
+    </div>
   </div>
+</div>
   <!-- Cards para telas pequenas -->
   <div class="block xl:hidden">
     <div class="flex flex-col items-center gap-4 my-8 max-w-3xl mx-auto md:grid md:grid-cols-2">
