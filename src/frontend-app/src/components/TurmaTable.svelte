@@ -374,10 +374,10 @@
           {:else if alunosPorTurma[turma.id]?.length > 0}
             <div class="flex flex-col gap-3 mt-3">
               {#each alunosPorTurma[turma.id] as aluno}
-                <div class="p-3 border rounded bg-gray-50 flex justify-between items-center">
+                <div class="p-3 border border-gray-300 rounded bg-gray-50 hover:bg-gray-200 flex justify-between items-center">
                   
                   <div>
-                    <div class="font-semibold">{aluno.nome}</div>
+                    <div class="font-semibold text-blue-900">{aluno.nome}</div>
                     {#if aluno.nomeSocial}
                       <div class="text-xs text-gray-500 italic">
                         {aluno.nomeSocial}
