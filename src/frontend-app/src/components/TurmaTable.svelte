@@ -1,17 +1,7 @@
 <script lang="ts">
-  import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Badge, Button, Card } from 'flowbite-svelte';
+  import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Badge, Card } from 'flowbite-svelte';
   import ConfirmModal from './ConfirmModal.svelte';
-  import { 
-    UserEditOutline, 
-    TrashBinOutline, 
-    ChevronDownOutline, 
-    ChevronRightOutline, 
-    UsersOutline,
-    CloseOutline,
-    ChevronLeftOutline,
-    ChevronRightOutline as ChevronRightIcon,
-    UserCircleOutline 
-  } from 'flowbite-svelte-icons';
+  import { UserEditOutline, TrashBinOutline, ChevronDownOutline, ChevronRightOutline, UsersOutline, CloseOutline, ChevronLeftOutline, ChevronRightOutline as ChevronRightIcon, UserCircleOutline } from 'flowbite-svelte-icons';
   import { goto } from '$app/navigation';
   import api from '$lib/api';
   import { onMount } from 'svelte';
@@ -35,17 +25,17 @@
   let loading = true;
   let error = '';
   
-  // Estados de Deleção
+  // Vars deletar
   let deletingId: number | null = null;
   let confirmOpen = false;
   let confirmTargetId: number | null = null;
   
-  // Estado de Expansão das Turmas
+  // Vars expansão de turmas
   let turmasExpandidas: { [key: number]: boolean } = {};
   let alunosPorTurma: { [key: number]: Estudante[] } = {};
   let carregandoAlunos: { [key: number]: boolean } = {};
 
-  // --- NOVOS ESTADOS PARA O PERFIL (DETALHES DO ESTUDANTE) ---
+  // Vars de detalhahamento do estudante
   let showPerfil = false;
   let estudanteSelecionado: Estudante | null = null;
   let estudanteIndex: number = 0;
@@ -64,7 +54,7 @@
     }
   });
 
-  // --- LÓGICA DE EXPANSÃO DA TURMA ---
+  // Expansão de turmas
   async function toggleTurma(turma: Turma) {
     const turmaId = turma.id;
     if (turmasExpandidas[turmaId]) {
@@ -89,7 +79,7 @@
     }
   }
 
-  // --- LÓGICA DO PERFIL ---
+  // Detalhamento do estudante
   async function abrirPerfil(aluno: Estudante, listaDaTurma: Estudante[]) {
     listaNavegacaoAtual = listaDaTurma;
     estudanteIndex = listaDaTurma.findIndex(e => e.id === aluno.id);
@@ -126,7 +116,7 @@
     notasSelecionado = [];
   }
 
-  // --- LÓGICA DE DELEÇÃO ---
+  // Deletar turma
   function openConfirm(id: number) { confirmTargetId = id; confirmOpen = true; }
   async function handleConfirm() {
     if (confirmTargetId) {
@@ -229,7 +219,7 @@
   </div>
 {/if}
 
-<!-- MODAL DE PERFIL EM TELA CHEIA -->
+<!-- Modal do estudante no pc -->
 {#if showPerfil && estudanteSelecionado}
   <div class="perfil-overlay p-8 pt-20">
     <div class="max-w-4xl mx-auto relative">
@@ -241,7 +231,7 @@
         <button 
           on:click={() => navegar('anterior')} 
           disabled={estudanteIndex === 0}
-          class="p-3 bg-gray-100 rounded-full disabled:opacity-30"
+          class="p-3 bg-gray-100 rounded-full disabled:opacity-30 hover:bg-gray-200"
         >
           <ChevronLeftOutline class="w-8 h-8" />
         </button>
@@ -258,7 +248,7 @@
         <button 
           on:click={() => navegar('proximo')} 
           disabled={estudanteIndex === listaNavegacaoAtual.length - 1}
-          class="p-3 bg-gray-100 rounded-full disabled:opacity-30"
+          class="p-3 bg-gray-100 rounded-full disabled:opacity-30 hover:bg-gray-200"
         >
           <ChevronRightIcon class="w-8 h-8" />
         </button>
