@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Badge, Button } from 'flowbite-svelte';
+  import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Badge, Button, Card } from 'flowbite-svelte';
   import ConfirmModal from './ConfirmModal.svelte';
   import { 
     UserEditOutline, 
@@ -185,7 +185,8 @@
             <TableBodyCell>
               {#if alunosPorTurma[turma.id]}
                 <Badge color="blue">{alunosPorTurma[turma.id].length} alunos</Badge>
-              {:else}-{/if}
+              {:else}-
+              {/if}
             </TableBodyCell>
             <TableBodyCell>
               <div class="flex gap-1">
@@ -197,7 +198,7 @@
 
           {#if turmasExpandidas[turma.id]}
             <TableBodyRow class="bg-gray-50">
-              <TableBodyCell colspan="6" class="p-4">
+              <TableBodyCell colspan=6 class="p-4">
                 <div class="border-t pt-4">
                   <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
                     <UsersOutline class="w-4 h-4" /> Alunos da Turma
@@ -207,15 +208,12 @@
                   {:else if alunosPorTurma[turma.id]?.length > 0}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                       {#each alunosPorTurma[turma.id] as aluno}
-                        <div class="flex items-center justify-between p-3 bg-white border rounded shadow-sm">
-                          <button 
-                            on:click={() => abrirPerfil(aluno, alunosPorTurma[turma.id])}
-                            class="text-sm font-bold text-blue-600 hover:underline text-left"
-                          >
+                        <button on:click={() => abrirPerfil(aluno, alunosPorTurma[turma.id])} class="flex items-center justify-between p-3 bg-white border rounded shadow-sm hover:bg-gray-100 hover:scale-110 active:bg-gray-300 duration-200">
+                          <div class="text-sm font-bold text-blue-600 ">
                             {aluno.nome}
-                          </button>
+                          </div>
                           <span class="text-xs text-gray-400">{aluno.matricula}</span>
-                        </div>
+                        </button>
                       {/each}
                     </div>
                   {:else}
@@ -281,16 +279,50 @@
               <TableHeadCell>PFV</TableHeadCell>
             </TableHead>
             <TableBody>
-              {#each notasSelecionado as n}
+              {#each notasSelecionado as nota}
                 <TableBodyRow>
-                  <TableBodyCell class="font-bold">{n.materia || 'Geral'}</TableBodyCell>
-                  <TableBodyCell>{n.cert1 ?? '-'}</TableBodyCell>
-                  <TableBodyCell>{n.apoio1 ?? '-'}</TableBodyCell>
-                  <TableBodyCell>{n.cert2 ?? '-'}</TableBodyCell>
-                  <TableBodyCell>{n.apoio2 ?? '-'}</TableBodyCell>
-                  <TableBodyCell>{n.pfv ?? '-'}</TableBodyCell>
-                </TableBodyRow>
-              {/each}
+                  <TableBodyCell class="font-bold">{nota.materia || 'Geral'}</TableBodyCell>
+                  <TableBodyCell>
+                    {#if nota.cert1 >= 5 && nota.cert1 < 6}
+                      <span class="text-green-500">{nota.cert1}</span>
+                    {:else if nota.cert1 >= 6 }
+                      <span class="text-blue-500">{nota.cert1}</span>
+                    {:else}
+                      <span class="text-red-500">{nota.cert1}</span>
+                    {/if}
+                  </TableBodyCell>
+                  <TableBodyCell>
+                    {#if nota.apoio1 < 6}
+                      <span class="text-red-500">{nota.apoio1}</span>
+                    {:else}
+                      <span class="text-blue-500">{nota.apoio1}</span>
+                    {/if}
+                  </TableBodyCell>
+                  <TableBodyCell>
+                    {#if nota.cert2 >= 5 && nota.cert2 < 6}
+                      <span class="text-green-500">{nota.cert2}</span>
+                    {:else if nota.cert2 >= 6 }
+                      <span class="text-blue-500">{nota.cert2}</span>
+                    {:else}
+                      <span class="text-red-500">{nota.cert2}</span>
+                    {/if}
+                  </TableBodyCell>
+                  <TableBodyCell>
+                    {#if nota.apoio2 < 6}
+                      <span class="text-red-500">{nota.apoio2}</span>
+                    {:else}
+                      <span class="text-blue-500">{nota.apoio2}</span>
+                    {/if}
+                  </TableBodyCell>
+                  <TableBodyCell class="font-bold">
+                    {#if nota.pfv < 6}
+                        <span class="text-red-500">{nota.pfv}</span>
+                      {:else}
+                        <span class="text-blue-500">{nota.pfv}</span>
+                      {/if}
+                  </TableBodyCell>
+              </TableBodyRow>
+            {/each}
             </TableBody>
           </Table>
         {:else}
@@ -300,9 +332,86 @@
       </div>
     </div>
   </div>
-
-  
 {/if}
+
+
+  <!-- Cards para telas pequenas (Mobile e Tablet) -->
+<div class="block xl:hidden px-4">
+  <div class="flex flex-col gap-6 my-8 max-w-3xl mx-auto">
+
+    {#each turmas as turma}
+      <Card class="w-full p-4 shadow-lg border border-gray-200 bg-white">
+
+        <!-- Turma Header -->
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <div class="text-lg font-bold text-blue-600">
+              {turma.nome}
+            </div>
+            <div class="text-sm text-gray-500">
+              {turma.turno} • {turma.serie}ª
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button on:click={() => toggleTurma(turma)}>
+              <ChevronDownOutline class="w-5 h-5" />
+            </button>
+            <button on:click={() => goto(`/turmas/edit/${turma.id}`)}>
+              <UserEditOutline class="w-5 h-5 text-blue-500" />
+            </button>
+            <button on:click={() => openConfirm(turma.id)}>
+              <TrashBinOutline class="w-5 h-5 text-red-500" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Students -->
+        {#if turmasExpandidas[turma.id]}
+          {#if carregandoAlunos[turma.id]}
+            <p class="text-xs text-gray-400">Buscando...</p>
+
+          {:else if alunosPorTurma[turma.id]?.length > 0}
+            <div class="flex flex-col gap-3 mt-3">
+              {#each alunosPorTurma[turma.id] as aluno}
+                <div class="p-3 border rounded bg-gray-50 flex justify-between items-center">
+                  
+                  <div>
+                    <div class="font-semibold">{aluno.nome}</div>
+                    {#if aluno.nomeSocial}
+                      <div class="text-xs text-gray-500 italic">
+                        {aluno.nomeSocial}
+                      </div>
+                    {/if}
+                    <div class="text-xs text-gray-400">
+                      {aluno.matricula}
+                    </div>
+                  </div>
+
+                  <button
+                    class="p-2"
+                    on:click={() => abrirPerfil(aluno, alunosPorTurma[turma.id])}
+                  >
+                    <UserCircleOutline class="w-5 h-5 text-gray-600" />
+                  </button>
+
+                </div>
+              {/each}
+            </div>
+
+          {:else}
+            <p class="text-xs text-gray-400 italic">
+              Nenhum aluno encontrado.
+            </p>
+          {/if}
+        {/if}
+
+      </Card>
+    {/each}
+
+  </div>
+</div>
+
 
 <ConfirmModal 
   open={confirmOpen} 

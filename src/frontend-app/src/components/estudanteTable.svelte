@@ -9,7 +9,7 @@
   type Estudante = {
     id: number;
     nome: string; 
-    nomesocial: string; 
+    nomeSocial: string; 
     matricula: string;
     turma: string;
   };
@@ -236,15 +236,52 @@
                 <TableHeadCell>PFV</TableHeadCell>
               </TableHead>
               <TableBody>
-                {#each notasSelecionado as n}
+
+                {#each notasSelecionado as nota}
+
                   <TableBodyRow>
-                    <TableBodyCell class="font-bold">{n.materia || 'Geral'}</TableBodyCell>
-                    <TableBodyCell>{n.cert1 ?? '-'}</TableBodyCell>
-                    <TableBodyCell>{n.apoio1 ?? '-'}</TableBodyCell>
-                    <TableBodyCell>{n.cert2 ?? '-'}</TableBodyCell>
-                    <TableBodyCell>{n.apoio2 ?? '-'}</TableBodyCell>
-                    <TableBodyCell class="text-blue-600 font-bold">{n.pfv ?? '-'}</TableBodyCell>
+                    <TableBodyCell class="font-bold">{nota.materia || 'Geral'}</TableBodyCell>
+                    <TableBodyCell>
+                      {#if nota.cert1 >= 5 && nota.cert1 < 6}
+                        <span class="text-green-500">{nota.cert1}</span>
+                      {:else if nota.cert1 >= 6 }
+                        <span class="text-blue-500">{nota.cert1}</span>
+                      {:else}
+                        <span class="text-red-500">{nota.cert1}</span>
+                      {/if}
+                    </TableBodyCell>
+                    <TableBodyCell>
+                        {#if nota.apoio1 < 6}
+                          <span class="text-red-500">{nota.apoio1}</span>
+                        {:else}
+                          <span class="text-blue-500">{nota.apoio1}</span>
+                        {/if}
+                    </TableBodyCell>
+                    <TableBodyCell>
+                      {#if nota.cert2 >= 5 && nota.cert2 < 6}
+                        <span class="text-green-500">{nota.cert2}</span>
+                      {:else if nota.cert2 >= 6 }
+                        <span class="text-blue-500">{nota.cert2}</span>
+                      {:else}
+                        <span class="text-red-500">{nota.cert2}</span>
+                      {/if}
+                    </TableBodyCell>
+                    <TableBodyCell>
+                        {#if nota.apoio2 < 6}
+                          <span class="text-red-500">{nota.apoio2}</span>
+                        {:else}
+                          <span class="text-blue-500">{nota.apoio2}</span>
+                        {/if}
+                    </TableBodyCell>
+                    <TableBodyCell class="font-bold">
+                      {#if nota.pfv < 6}
+                          <span class="text-red-500">{nota.pfv}</span>
+                        {:else}
+                          <span class="text-blue-500">{nota.pfv}</span>
+                        {/if}
+                    </TableBodyCell>
                   </TableBodyRow>
+
                 {/each}
               </TableBody>
             </Table>
@@ -270,8 +307,8 @@
             >
               {est.nome}
             </div>
-            {#if est.nomesocial}
-              <div class="text-xs text-gray-500 italic truncate">{est.nomesocial}</div>
+            {#if est.nomeSocial}
+              <div class="text-xs text-gray-500 italic truncate">{est.nomeSocial}</div>
             {/if}
           </div>
           
@@ -282,7 +319,7 @@
               title="Ver Perfil"
               on:click={() => abrirPerfil(est)}
             >
-              <UserCircleOutline class="w-5 h-5 text-gray-500" />
+              <UserCircleOutline class="w-5 h-5 text-gray-500 " />
             </button>
             <!-- Botão Editar -->
             <button
