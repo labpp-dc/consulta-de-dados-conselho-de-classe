@@ -36,7 +36,7 @@ router.get('/estudantes/:nome', verifyToken, async function(req, res) {
     
     res.json({
       success: true,
-      data: result.rows[0]
+      data: result.rows
     });
   } catch (error) {
     console.error('Erro ao buscar estudantes:', error);

@@ -52,7 +52,7 @@ router.get('/notas/estudante/:nome', verifyToken, async function(req, res) {
     
     res.json({
       success: true,
-      data: result.rows[0]
+      data: result.rows
     });
   } catch (error) {
     console.error('Erro ao buscar as notas do estudante:', error);
